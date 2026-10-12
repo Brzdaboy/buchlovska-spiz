@@ -70,7 +70,7 @@ V Logto Console:
 3. **Connectors → Email**: musí být nastavený e-mailový konektor; jeho šablona typu
    **OrganizationInvitation** musí obsahovat odkaz `{{link}}`.
 
-`logto.management_resource` nechte `https://default.logto.app/api`.
+`logto.management_resource` nastavte na `https://vnac13.logto.app/api`.
 
 ## 5. Tabulky a váš účet administrátora
 
