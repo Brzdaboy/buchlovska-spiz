@@ -10,6 +10,7 @@ use App\Auth\LogtoManagement;
 use App\Auth\OidcClient;
 use App\Controller\AdminController;
 use App\Controller\AuthController;
+use App\Controller\DemandController;
 use App\Controller\OfferController;
 use App\Controller\PortalController;
 use App\Controller\ProfileController;
@@ -248,6 +249,7 @@ final class App
         (new PortalController($this))->register($this->router);
         (new ProfileController($this))->register($this->router);
         (new OfferController($this))->register($this->router);
+        (new DemandController($this))->register($this->router);
         (new AdminController($this))->register($this->router);
     }
 }
