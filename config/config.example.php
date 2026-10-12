@@ -14,6 +14,14 @@ return [
         'debug' => true,                       // v produkci se ignoruje
         'timezone' => 'Europe/Prague',
     ],
+    // Veřejné kontakty provozovatele (stránka Kontakt). Prázdné = zobrazí se
+    // poznámka „doplníme před spuštěním“. Vyplnit až po potvrzení klientem.
+    'site' => [
+        'operator_name' => '',
+        'contact_email' => '',
+        'contact_phone' => '',
+        'contact_address' => '',
+    ],
     'session' => [
         'idle_minutes' => 120,
     ],

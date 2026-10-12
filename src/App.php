@@ -70,6 +70,7 @@ final class App
             $this->csrf = new Csrf($this->session);
             $this->view->share('csrf', $this->csrf);
             $this->view->share('session', $this->session);
+            $this->view->share('currentPath', $request->path);
 
             if (!in_array($request->method, ['GET', 'HEAD', 'POST'], true)) {
                 throw HttpException::methodNotAllowed(['GET', 'HEAD', 'POST']);
@@ -133,7 +134,6 @@ final class App
 
     private function registerRoutes(): void
     {
-        $public = new PublicController($this);
-        $this->router->get('/', $public->home(...));
+        (new PublicController($this))->register($this->router);
     }
 }

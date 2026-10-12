@@ -5,21 +5,70 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\App;
-use App\Http\Request;
 use App\Http\Response;
+use App\Http\Router;
 
-/** Veřejné stránky. Nikdy nesmí číst data tržiště (nabídky, poptávky, profily). */
+/**
+ * Veřejné stránky. NIKDY nesmí číst data tržiště (nabídky, poptávky, profily,
+ * kontakty členů) ani se připojovat k databázi — viz SPECIFIKACE §2 a §16.
+ */
 final class PublicController
 {
+    /** cesta => [šablona, titulek, popis] */
+    private const PAGES = [
+        '/o-projektu' => ['public/about', 'O projektu', 'Proč vznikla Buchlovská spíž a jak propojuje místní zemědělce se školními jídelnami.'],
+        '/jak-ziskat-pristup' => ['public/access', 'Jak získat přístup', 'Registrace do Buchlovské spíže je jen na pozvánku. Jak ji získat a co následuje.'],
+    ];
+
     public function __construct(private App $app)
     {
     }
 
-    /** @param array<string, string> $params */
-    public function home(Request $request, array $params = []): Response
+    public function register(Router $router): void
     {
-        return Response::html($this->app->view->render('public/home', [
-            'title' => null,
-        ]));
+        $router->get('/', $this->home(...));
+        foreach (array_keys(self::PAGES) as $path) {
+            $router->get($path, fn (): Response => $this->staticPage($path));
+        }
+        $router->get('/kontakt', $this->contact(...));
+        $router->get('/ochrana-osobnich-udaju', fn (): Response => $this->legal('Ochrana osobních údajů'));
+        $router->get('/podminky-pouzivani', fn (): Response => $this->legal('Podmínky používání'));
+        // Dočasně, do kroku 4 (Logto):
+        $router->get('/prihlaseni', fn (): Response => $this->page('public/login-placeholder', 'Přihlášení'));
+    }
+
+    public function home(): Response
+    {
+        return $this->page('public/home', null);
+    }
+
+    private function staticPage(string $path): Response
+    {
+        [$template, $title, $description] = self::PAGES[$path];
+        return $this->page($template, $title, ['description' => $description]);
+    }
+
+    public function contact(): Response
+    {
+        $config = $this->app->config;
+        return $this->page('public/contact', 'Kontakt', [
+            'operator' => [
+                'name' => trim((string) $config->get('site.operator_name', '')),
+                'email' => trim((string) $config->get('site.contact_email', '')),
+                'phone' => trim((string) $config->get('site.contact_phone', '')),
+                'address' => trim((string) $config->get('site.contact_address', '')),
+            ],
+        ]);
+    }
+
+    private function legal(string $heading): Response
+    {
+        return $this->page('public/legal', $heading, ['heading' => $heading]);
+    }
+
+    /** @param array<string, mixed> $data */
+    private function page(string $template, ?string $title, array $data = []): Response
+    {
+        return Response::html($this->app->view->render($template, $data + ['title' => $title]));
     }
 }

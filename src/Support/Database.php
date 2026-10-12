@@ -21,6 +21,12 @@ final class Database
     {
     }
 
+    /** Pro testy: ověření, že veřejné stránky na databázi nesahají. */
+    public function isConnected(): bool
+    {
+        return $this->pdo !== null;
+    }
+
     public function pdo(): PDO
     {
         if ($this->pdo === null) {
