@@ -95,6 +95,13 @@ ul { padding-left: 1.2em; }
 .audience-card h3 { font-size: 26px; }
 .audience-card ul { margin: 16px 0 0; color: var(--muted); }
 .audience-card li { margin-bottom: 6px; }
+/* Číslovaný seznam s čísly v kroužku; barva kroužku podle tónu karty. */
+.numbered { list-style: none; counter-reset: num; padding: 0; margin: 18px 0 0; display: grid; gap: 12px; color: var(--muted); }
+.numbered li { counter-increment: num; display: grid; grid-template-columns: 32px 1fr; gap: 12px; align-items: start; margin: 0; }
+.numbered li::before { content: counter(num); width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: #d3e6cf; color: var(--ink); font: 700 15px/1 var(--sans); }
+.numbered li { line-height: 1.5; padding-top: 4px; }
+.numbered li::before { margin-top: -4px; }
+.tone-honey .numbered li::before { background: #f2dca0; }
 .tone-mint { background: #e1f0df; }
 .tone-honey { background: #f9ecc8; }
 .tone-rose { background: #f5e4df; }

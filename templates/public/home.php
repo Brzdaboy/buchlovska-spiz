@@ -44,20 +44,20 @@ $categories = [
         <article class="audience-card tone-mint">
             <h3>Zemědělci a producenti</h3>
             <p>Nabídněte svou úrodu a výrobky školám v okolí.</p>
-            <ul>
+            <ol class="numbered">
                 <li>zveřejníte nabídku s cenou, množstvím a dostupností,</li>
                 <li>uvidíte, co školy právě poptávají,</li>
                 <li>školy vás kontaktují přímo telefonem nebo e-mailem.</li>
-            </ul>
+            </ol>
         </article>
         <article class="audience-card tone-honey">
             <h3>Školy a školní jídelny</h3>
             <p>Najděte místní suroviny pro svou kuchyni.</p>
-            <ul>
+            <ol class="numbered">
                 <li>zveřejníte poptávku s množstvím a obdobím, kdy surovinu potřebujete,</li>
                 <li>projdete aktuální nabídky zemědělců z regionu,</li>
                 <li>s producentem se domluvíte napřímo.</li>
-            </ul>
+            </ol>
         </article>
     </div>
 </section>
