@@ -23,10 +23,12 @@ $needsDate = ListingState::reactivationNeedsNewDate($offer['available_until'], t
             <p>Platnost: <?= $offer['available_until'] === null ? 'do ručního ukončení' : 'do ' . e(format_date($offer['available_until'])) ?>.</p>
             <label class="checkbox"><input type="checkbox" name="change_until" value="1"<?= isset($errors['available_until']) ? ' checked' : '' ?>> <span>Chci změnit konec platnosti</span></label>
         <?php endif; ?>
-        <div class="field<?= isset($errors['available_until']) ? ' has-error' : '' ?>">
-            <label for="f-available_until">Nový konec platnosti <span class="optional">(nepovinné)</span></label>
-            <?php if (isset($errors['available_until'])): ?><span class="error" id="f-until-error"><?= e($errors['available_until']) ?></span><?php endif; ?>
-            <input id="f-available_until" type="date" name="available_until" min="<?= e(today()) ?>" value="<?= e((string) $value) ?>"<?= isset($errors['available_until']) ? ' aria-invalid="true" aria-describedby="f-until-error"' : '' ?>>
+        <?php
+        $values = ['available_until' => (string) $value];
+        ['input' => $input] = require dirname(__DIR__) . '/partials/fields.php';
+        ?>
+        <div class="form-grid">
+            <?= $input('available_until', 'Nový konec platnosti', ['type' => 'date', 'required' => false, 'min' => today(), 'hint' => 'Prázdné = platí do ručního ukončení.']) ?>
         </div>
         <div class="form-actions">
             <button class="button" type="submit">Znovu zveřejnit</button>

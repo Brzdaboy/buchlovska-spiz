@@ -27,12 +27,13 @@ $statusLabels = [
         <?= $csrf->field() ?>
         <h2>Nová pozvánka</h2>
         <div class="form-row">
-            <label class="field">
-                <span>E-mail</span>
-                <input type="email" name="email" required maxlength="190" autocomplete="off" value="<?= e($old['email'] ?? '') ?>">
-            </label>
+            <?php
+            $values = $old;
+            ['input' => $input] = require dirname(__DIR__) . '/partials/fields.php';
+            ?>
+            <?= $input('email', 'E-mail pozvaného', ['type' => 'email', 'maxlength' => 190, 'autocomplete' => 'off', 'placeholder' => 'Např. farma@email.cz']) ?>
             <fieldset class="field">
-                <legend>Role</legend>
+                <legend>Role <span class="req" aria-hidden="true">*</span></legend>
                 <?php foreach ($roles as $value => $label): ?>
                     <label class="radio">
                         <input type="radio" name="role" value="<?= e($value) ?>" required <?= ($old['role'] ?? '') === $value ? 'checked' : '' ?>>

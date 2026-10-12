@@ -6,7 +6,7 @@
 /** @var array<int, string> $units */
 /** @var string $today */
 /** @var \App\Security\Csrf $csrf */
-['value' => $value, 'input' => $input, 'select' => $select] = require dirname(__DIR__) . '/partials/fields.php';
+['value' => $value, 'input' => $input, 'select' => $select, 'feedback' => $feedback] = require dirname(__DIR__) . '/partials/fields.php';
 $isNew = $offer === null;
 $availability = $value('availability_type') ?: 'immediate';
 ?>
@@ -35,27 +35,30 @@ $availability = $value('availability_type') ?: 'immediate';
             <legend>Co nabízíte</legend>
             <div class="form-grid">
                 <?= $select('category_id', 'Kategorie', $categories, ['legacy' => 'Původní kategorie (už se nepoužívá)']) ?>
-                <?= $input('product_name', 'Název plodiny nebo výrobku', ['maxlength' => 150, 'hint' => 'Např. Brambory Adéla, Květový med']) ?>
+                <?= $input('product_name', 'Název plodiny nebo výrobku', ['maxlength' => 150, 'placeholder' => 'Např. Brambory Adéla']) ?>
             </div>
-            <?= $input('description', 'Popis', ['type' => 'textarea', 'required' => false, 'maxlength' => 2000, 'rows' => 3, 'hint' => 'Odrůda, kvalita, balení…']) ?>
+            <?= $input('description', 'Popis', ['type' => 'textarea', 'required' => false, 'maxlength' => 2000, 'rows' => 3, 'placeholder' => 'Odrůda, kvalita, balení…']) ?>
         </fieldset>
 
         <fieldset>
             <legend>Cena a množství</legend>
             <div class="form-grid pairs">
-                <?= $input('unit_price', 'Cena v Kč', ['inputmode' => 'decimal', 'hint' => 'Přesná cena za jednotku, např. 14,50']) ?>
+                <?= $input('unit_price', 'Cena v Kč', ['inputmode' => 'decimal', 'placeholder' => 'Např. 14,50', 'hint' => 'Přesná cena za jednotku.']) ?>
                 <?= $select('price_unit_id', 'Cena za', array_map(static fn ($u) => 'Kč / ' . $u, $units), ['legacy' => 'původní jednotka']) ?>
-                <?= $input('available_quantity', 'Dostupné množství', ['inputmode' => 'decimal']) ?>
+                <?= $input('available_quantity', 'Dostupné množství', ['inputmode' => 'decimal', 'placeholder' => 'Např. 800']) ?>
                 <?= $select('quantity_unit_id', 'Jednotka množství', $units, ['legacy' => 'původní jednotka']) ?>
             </div>
         </fieldset>
 
         <fieldset>
             <legend>Dostupnost</legend>
-            <div class="field<?= isset($errors['availability_type']) ? ' has-error' : '' ?>">
-                <?php if (isset($errors['availability_type'])): ?><span class="error"><?= e($errors['availability_type']) ?></span><?php endif; ?>
-                <label class="radio"><input type="radio" name="availability_type" value="immediate" <?= $availability === 'immediate' ? 'checked' : '' ?>> Ihned</label>
-                <label class="radio"><input type="radio" name="availability_type" value="from_date" <?= $availability === 'from_date' ? 'checked' : '' ?>> Od data</label>
+            <?php [$availabilityFeedback, $availabilityAria] = $feedback('f-availability_type', 'availability_type', null); ?>
+            <div class="field<?= isset($errors['availability_type']) ? ' has-error' : '' ?>" role="radiogroup" aria-label="Dostupnost"<?= $availabilityAria ?>>
+                <div class="radio-row">
+                    <label class="radio"><input type="radio" name="availability_type" value="immediate" <?= $availability === 'immediate' ? 'checked' : '' ?>> Ihned</label>
+                    <label class="radio"><input type="radio" name="availability_type" value="from_date" <?= $availability === 'from_date' ? 'checked' : '' ?>> Od data</label>
+                </div>
+                <?= $availabilityFeedback ?>
             </div>
             <div class="form-grid">
                 <?= $input('available_from', 'Dostupné od', ['type' => 'date', 'required' => false, 'hint' => 'Vyplňte jen při volbě „Od data“.']) ?>
@@ -65,7 +68,7 @@ $availability = $value('availability_type') ?: 'immediate';
 
         <fieldset>
             <legend>Doprava</legend>
-            <?= $input('delivery_terms', 'Podmínky dopravy', ['type' => 'textarea', 'maxlength' => 1000, 'rows' => 3, 'hint' => 'Např. rozvoz do 20 km zdarma, jinak osobní odběr.']) ?>
+            <?= $input('delivery_terms', 'Podmínky dopravy', ['type' => 'textarea', 'maxlength' => 1000, 'rows' => 3, 'placeholder' => 'Např. rozvoz do 20 km zdarma, jinak osobní odběr.']) ?>
         </fieldset>
 
         <div class="form-actions">
