@@ -70,8 +70,9 @@ ul { padding-left: 1.2em; }
 /* ---------- Hero ---------- */
 .hero { display: grid; grid-template-columns: 1.02fr .98fr; background: var(--cream); overflow: hidden; min-height: 620px; }
 .hero-copy { padding: 96px 5vw 72px var(--edge); position: relative; z-index: 2; }
-.hero h1 { font: 700 clamp(44px, 5.1vw, 76px)/0.98 var(--serif); letter-spacing: -0.04em; margin: 22px 0; }
-.hero h1 em { color: var(--green-2); font-weight: 400; }
+/* Velikost je spočítaná tak, aby se „školních kuchyní“ vešlo na jeden řádek i s širokým písmem Georgia. */
+.hero h1 { font: 700 clamp(44px, 4.4vw, 56px)/0.98 var(--serif); letter-spacing: -0.04em; margin: 22px 0; }
+.hero h1 em { color: var(--green-2); font-weight: 400; white-space: nowrap; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 32px 0; }
 .trust-row { display: flex; flex-wrap: wrap; gap: 14px 26px; font-size: 13px; font-weight: 700; color: #4f6155; list-style: none; padding: 0; margin: 0; }
 .trust-row li::before { content: "✓"; display: inline-grid; place-items: center; background: #e1eccd; color: var(--green); width: 20px; height: 20px; border-radius: 50%; margin-right: 8px; font-size: 12px; }
@@ -186,7 +187,7 @@ ul { padding-left: 1.2em; }
   .nav-mobile > summary::-webkit-details-marker { display: none; }
   .nav-mobile[open] .nav { display: flex; position: absolute; top: 68px; left: 0; right: 0; background: #fff; flex-direction: column; align-items: stretch; gap: 18px; padding: 22px var(--edge); box-shadow: 0 20px 25px #00000014; }
   .hero-copy { padding: 48px var(--edge); }
-  .hero h1 { font-size: 42px; }
+  .hero h1 { font-size: min(42px, 9.8vw); }
   .hero-actions { flex-direction: column; }
   .hero-visual { min-height: 320px; }
   .section { padding: 60px var(--edge); }
