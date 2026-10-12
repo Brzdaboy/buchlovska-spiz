@@ -268,3 +268,24 @@ ul { padding-left: 1.2em; }
 .checkbox input { width: 20px; height: 20px; margin-top: 2px; flex: none; accent-color: var(--green); }
 .form-actions { display: flex; gap: 12px; flex-wrap: wrap; }
 .form-summary { margin: 0 0 18px; }
+
+/* ---------- Vlastní záznamy (nabídky, poptávky) ---------- */
+.field select, .field textarea, .field input[type="date"] { width: 100%; border: 1px solid #c9d2c6; border-radius: 8px; padding: 11px 12px; font-weight: 400; background: #fff; }
+.field textarea { resize: vertical; min-height: 90px; }
+.profile-form > fieldset > .field { margin-top: 18px; }
+.listing-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+.listing-item { display: flex; justify-content: space-between; gap: 20px; align-items: flex-start; margin: 0; }
+.listing-item h2 { font-size: 22px; margin: 6px 0; }
+.listing-meta { display: flex; gap: 10px; align-items: center; font-size: 13px; color: var(--muted); margin: 0; }
+.listing-facts { margin: 0; color: #33493c; }
+.listing-actions { display: flex; flex-wrap: nowrap; gap: 8px; justify-content: flex-end; flex: none; }
+.form-grid.pairs { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+.listing-actions form { margin: 0; }
+.badge-danger { background: #f6dede; color: var(--danger); }
+.notice-danger { background: #fbefef; border-left: 3px solid var(--danger); padding: 10px 14px; margin: 12px 0 0; border-radius: 6px; font-size: 14px; }
+.empty-state { text-align: center; padding: 40px 24px; }
+@media (max-width: 760px) {
+  .listing-item { flex-direction: column; }
+  .listing-actions { justify-content: flex-start; flex-wrap: wrap; }
+  .form-grid.pairs { grid-template-columns: 1fr; }
+}

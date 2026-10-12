@@ -18,6 +18,11 @@ $name = $profile['producer_name'] ?? $profile['school_name'] ?? null;
             <li><a class="card admin-link" href="/admin"><strong>Administrace</strong><span>Pozvánky, účty a číselníky.</span></a></li>
         </ul>
     <?php elseif ($profile !== null): ?>
+        <ul class="admin-links">
+            <?php if ($user['role'] === 'producer'): ?>
+                <li><a class="card admin-link" href="/moje-nabidky"><strong>Moje nabídky</strong><span>Přidat, upravit, ukončit nebo znovu zveřejnit nabídku.</span></a></li>
+            <?php endif; ?>
+        </ul>
         <div class="card">
             <h2>Kontakty, které vidí ostatní členové</h2>
             <dl class="contact-list">
@@ -28,7 +33,7 @@ $name = $profile['producer_name'] ?? $profile['school_name'] ?? null;
             </dl>
             <p><a class="button secondary small" href="/profil">Upravit profil</a></p>
         </div>
-        <p class="muted"><?= $user['role'] === 'school' ? 'Poptávky' : 'Nabídky' ?> a tržiště přibudou v dalších krocích.</p>
+        <p class="muted"><?= $user['role'] === 'school' ? 'Poptávky a tržiště' : 'Tržiště' ?> přibudou v dalších krocích.</p>
     <?php endif; ?>
     <form method="post" action="/odhlaseni">
         <?= $csrf->field() ?>

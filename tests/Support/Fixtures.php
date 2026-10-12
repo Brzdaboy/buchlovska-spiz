@@ -27,4 +27,28 @@ final class Fixtures
             'contact_publication_consent' => '1',
         ];
     }
+
+    /**
+     * Formulář nabídky. ID kategorie/jednotek odpovídají výchozím číselníkům
+     * (1 = Zelenina, 1 = kg, 6 = ks) z migrace 001.
+     *
+     * @param array<string, string> $overrides
+     * @return array<string, string>
+     */
+    public static function offerForm(array $overrides = []): array
+    {
+        return $overrides + [
+            'category_id' => '1',
+            'product_name' => 'Brambory Adéla',
+            'description' => 'Konzumní, praná.',
+            'unit_price' => '14,50',
+            'price_unit_id' => '1',
+            'available_quantity' => '800',
+            'quantity_unit_id' => '1',
+            'availability_type' => 'immediate',
+            'available_from' => '',
+            'available_until' => '',
+            'delivery_terms' => 'Rozvoz po Buchlovicích zdarma.',
+        ];
+    }
 }
