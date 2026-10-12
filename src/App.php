@@ -8,7 +8,10 @@ use App\Auth\CurrentUser;
 use App\Auth\LoginService;
 use App\Auth\LogtoManagement;
 use App\Auth\OidcClient;
+use App\Controller\AdminCatalogController;
 use App\Controller\AdminController;
+use App\Controller\AdminListingController;
+use App\Controller\AdminUserController;
 use App\Controller\AuthController;
 use App\Controller\DemandController;
 use App\Controller\OfferController;
@@ -251,5 +254,8 @@ final class App
         (new OfferController($this))->register($this->router);
         (new DemandController($this))->register($this->router);
         (new AdminController($this))->register($this->router);
+        (new AdminListingController($this))->register($this->router);
+        (new AdminUserController($this))->register($this->router);
+        (new AdminCatalogController($this))->register($this->router);
     }
 }

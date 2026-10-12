@@ -13,9 +13,10 @@ $statusLabels = [
 ?>
 <section class="page-hero compact">
     <div class="page-hero-inner wide">
-        <p class="eyebrow"><a href="/admin">Administrace</a></p>
+        <p class="eyebrow">Administrace</p>
         <h1>Pozvánky</h1>
         <p class="lead">Registrace je jen na pozvánku. Odkaz v e-mailu platí 7 dní a lze ho použít jednou.</p>
+        <?php require __DIR__ . '/nav.php'; ?>
     </div>
 </section>
 <div class="admin-content">

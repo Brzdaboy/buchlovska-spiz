@@ -17,6 +17,8 @@ use App\Service\InvitationService;
  */
 final class AdminController
 {
+    use AdminAccess;
+
     public function __construct(private App $app)
     {
     }
@@ -30,20 +32,19 @@ final class AdminController
         $router->post('/admin/pozvanky/{id}/zrusit', $this->revokeInvitation(...));
     }
 
-    /** @return array<string, mixed> */
-    private function admin(): array
-    {
-        $user = $this->app->auth()->requireRole('admin');
-        if ($user['status'] !== 'active') {
-            throw \App\Http\HttpException::forbidden();
-        }
-        return $user;
-    }
-
     public function dashboard(): Response
     {
-        $this->admin();
-        return $this->page('admin/dashboard', 'Administrace');
+        $admin = $this->admin();
+        $pdo = $this->app->db->pdo();
+        $seen = is_string($admin['last_review_seen_at'] ?? null) ? $admin['last_review_seen_at'] : null;
+        $pendingInvitations = (int) $pdo->query(
+            "SELECT COUNT(*) FROM invitations WHERE status = 'pending' AND expires_at > UTC_TIMESTAMP()"
+        )->fetchColumn();
+        return $this->page('admin/dashboard', 'Administrace', [
+            'counts' => (new \App\Repository\AdminListingRepository($pdo))->counts($seen),
+            'users' => (new \App\Repository\AdminUserRepository($pdo))->activeCounts(),
+            'pendingInvitations' => $pendingInvitations,
+        ]);
     }
 
     public function invitations(): Response
@@ -112,9 +113,4 @@ final class AdminController
         return Response::redirect('/admin/pozvanky');
     }
 
-    /** @param array<string, mixed> $data */
-    private function page(string $template, string $title, array $data = []): Response
-    {
-        return Response::html($this->app->view->render($template, $data + ['title' => $title]));
-    }
 }

@@ -315,3 +315,41 @@ ul { padding-left: 1.2em; }
 .field > legend { font: 700 14px var(--sans); margin-bottom: 4px; }
 .profile-form .form-actions, .form-inline .form-row > .button { margin-top: 24px; }
 .form-inline .form-row > .button { margin-top: 26px; }
+
+/* ---------- Administrace ---------- */
+.subnav { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 18px; }
+.subnav a, .tabs a { text-decoration: none; padding: 8px 14px; border-radius: 30px; border: 1px solid #c9d2c6; font-size: 14px; font-weight: 700; background: #fffefa; }
+.subnav a[aria-current="page"], .tabs a[aria-current="page"] { background: var(--green); border-color: var(--green); color: #fff; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.tabs a { padding: 6px 12px; font-size: 13px; }
+.stat-grid { list-style: none; padding: 0; margin: 0 0 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+.stat { display: flex; flex-direction: column; gap: 6px; text-decoration: none; margin: 0; height: 100%; }
+.stat b { font: 700 40px/1 var(--serif); }
+.stat span { color: var(--muted); font-size: 14px; }
+.stat-attention { border-color: #c9a646; background: #fff7e0; }
+.detail-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr); gap: 20px; align-items: start; }
+.detail-grid .card { margin-top: 0; }
+.detail-grid > div > .card + .card, .detail-grid > div > .card + form, .detail-grid > div > h2 { margin-top: 20px; }
+.contact-list { display: grid; grid-template-columns: max-content 1fr; gap: 8px 18px; }
+.contact-list dt { font-weight: 700; }
+.contact-list dd { margin: 0; }
+.history { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; font-size: 14px; }
+.history li { display: flex; flex-direction: column; gap: 2px; border-left: 2px solid var(--line); padding-left: 12px; }
+.plain-list { padding-left: 1.1em; }
+.stack { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+.stack p { margin: 8px 0 0; }
+.small-print { font-size: 13px; margin: 14px 0 0; }
+.catalog-table input:not([type="checkbox"]) { width: 100%; border: 1px solid #c9d2c6; border-radius: 6px; padding: 8px 10px; }
+.catalog-table input.short { max-width: 80px; }
+.field-short { flex: 0 1 110px !important; }
+.form-inline input { width: 100%; border: 1px solid #c9d2c6; border-radius: 8px; padding: 11px 12px; min-height: 46px; background: #fff; }
+@media (max-width: 900px) {
+  .detail-grid { grid-template-columns: 1fr; }
+  .contact-list { grid-template-columns: 1fr; gap: 2px; }
+  .contact-list dd { margin-bottom: 8px; }
+}
+
+/* Administrace – drobnosti v detailech */
+.admin-content .card h2, .admin-content .card h3 { margin-top: 0; font-size: 22px; }
+.admin-content .card > .listing-meta { margin-bottom: 16px; }
