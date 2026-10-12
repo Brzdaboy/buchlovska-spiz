@@ -117,6 +117,14 @@ final class MarketFilter
             || $this->priceUnitId !== null || $this->maxPrice !== null;
     }
 
+    /** Počet zapnutých filtrů mimo hledání (kategorie, období, cena) – číslo u tlačítka Filtry. */
+    public function extraFilterCount(): int
+    {
+        return (int) ($this->categoryId !== null)
+            + (int) ($this->from !== null || $this->to !== null)
+            + (int) ($this->priceUnitId !== null || $this->maxPrice !== null);
+    }
+
     public function withPage(int $page): self
     {
         return new self(

@@ -250,6 +250,18 @@ final class MarketFlowTest extends DatabaseTestCase
         self::assertStringContainsString('Zadejte cenu v Kč', $this->get('/nabidky', ['cena_do' => 'levně', 'jednotka' => 'kg'])->body);
     }
 
+    public function testFiltersAreCollapsedUntilUsed(): void
+    {
+        $this->offer();
+        self::assertStringContainsString('<details class="market-more">', $this->get('/nabidky')->body);
+        self::assertStringContainsString('<details class="market-more">', $this->get('/nabidky', ['q' => 'brambory'])->body, 'samotné hledání panel neotevírá');
+
+        $filtered = $this->get('/nabidky', ['kategorie' => 'zelenina', 'od' => self::day(1), 'jednotka' => 'kg'])->body;
+        self::assertStringContainsString('<details class="market-more" open>', $filtered);
+        self::assertStringContainsString('class="filter-count" aria-label="aktivní: 3">3</span>', $filtered);
+        self::assertStringContainsString('<details class="market-more" open>', $this->get('/nabidky', ['cena_do' => '10'])->body, 'chyba ve filtru je vidět');
+    }
+
     // --- řazení a stránkování -------------------------------------------------------------
 
     public function testNewestFirstAndPagesOfTwelve(): void

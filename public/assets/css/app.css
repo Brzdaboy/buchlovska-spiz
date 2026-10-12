@@ -353,9 +353,19 @@ ul { padding-left: 1.2em; }
 .admin-content .card > .listing-meta { margin-bottom: 16px; }
 
 /* ---------- Tržiště ---------- */
-.market-filter { margin-top: 0; }
-.market-filter-grid { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1.4fr); gap: 16px 18px; align-items: start; }
-.market-filter-grid.with-price { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 1.6fr) minmax(0, 1.3fr); }
+.market-filter { margin-top: 0; position: relative; padding: 20px; }
+.market-search { display: flex; gap: 10px; margin-right: 132px; }
+.market-search input { flex: 1 1 auto; min-width: 0; height: 48px; border: 1px solid #c9d2c6; border-radius: 8px; padding: 0 14px; font: inherit; background: #fff; }
+.market-search input::placeholder { color: #7d8a81; opacity: 1; }
+.market-search-submit, .market-more > summary { height: 48px; min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 0 18px; }
+.market-more > summary { position: absolute; top: 20px; right: 20px; width: 122px; list-style: none; cursor: pointer; user-select: none; }
+.market-search-submit svg, .market-more > summary svg { flex-shrink: 0; }
+.market-more > summary::-webkit-details-marker { display: none; }
+.market-more[open] > summary { background: var(--sage); }
+.filter-count { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px; background: var(--green); color: #fff; font-size: 12px; line-height: 1; }
+.market-filter-panel { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); }
+.market-filter-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 16px 18px; align-items: start; }
+.market-filter-grid.with-price { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1.2fr); }
 .market-filter .field > label, .market-filter .filter-label { font-weight: 700; font-size: 14px; line-height: 1.6; }
 .market-filter .field input, .market-filter .field select { width: 100%; min-width: 0; height: 48px; min-height: 48px; }
 .period-inputs, .price-inputs { display: flex; align-items: center; gap: 8px; }
@@ -410,7 +420,15 @@ ul { padding-left: 1.2em; }
 .dashboard .admin-links { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 
 @media (max-width: 1000px) {
-  .market-filter-grid, .market-filter-grid.with-price { grid-template-columns: 1fr 1fr; }
+  .market-filter-grid.with-price { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 560px) {
+  .market-filter { padding: 16px; }
+  .market-search { margin-right: 112px; gap: 8px; }
+  .market-search-label { display: none; }
+  .market-search-submit { padding: 0 14px; }
+  .market-more > summary { top: 16px; right: 16px; width: 104px; padding: 0 12px; }
+  .market-more > summary svg { display: none; }
 }
 @media (max-width: 640px) {
   .market-filter-grid, .market-filter-grid.with-price { grid-template-columns: 1fr; }
