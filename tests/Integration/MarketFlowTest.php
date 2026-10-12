@@ -103,6 +103,20 @@ final class MarketFlowTest extends DatabaseTestCase
         self::assertStringContainsString('href="/kontakt"', $body, 'kontakt zůstává v patičce');
     }
 
+    public function testFlashMessagesFloatAndOnlySuccessHidesItself(): void
+    {
+        AppFactory::$sessionData['_flash'] = [
+            ['type' => 'success', 'message' => 'Nabídka je zveřejněná.'],
+            ['type' => 'error', 'message' => 'Něco se nepovedlo <b>'],
+        ];
+        $body = $this->get('/nabidky')->body;
+        self::assertStringContainsString('<div class="toast toast-success" role="status" data-autohide="5000">', $body);
+        self::assertStringContainsString('<div class="toast toast-error" role="alert">', $body);
+        self::assertStringContainsString('Něco se nepovedlo &lt;b&gt;', $body);
+        self::assertStringContainsString('<script src="/assets/js/app.js" defer></script>', $body);
+        self::assertStringNotContainsString('class="toast', $this->get('/nabidky')->body, 'hláška se ukáže jen jednou');
+    }
+
     public function testIncompleteProfileIsSentToProfileForm(): void
     {
         $incomplete = $this->createUser('school', ['status' => 'profile_incomplete']);

@@ -24,6 +24,7 @@ $current = static fn (string $path): string =>
     <meta name="theme-color" content="#1e5a36">
     <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="/assets/css/app.css">
+    <script src="/assets/js/app.js" defer></script>
 </head>
 <body>
 <a class="skip-link" href="#obsah">Přeskočit na obsah</a>
@@ -52,9 +53,18 @@ $current = static fn (string $path): string =>
         <nav class="nav" aria-label="Hlavní navigace"><?= $navLinks ?></nav>
     </details>
 </header>
-<?php foreach ($flashes as $flash): ?>
-    <div class="flash flash-<?= e($flash['type']) ?>" role="status"><?= e($flash['message']) ?></div>
-<?php endforeach; ?>
+<?php if ($flashes !== []): ?>
+<?php /* Hlášky plavou přes stránku (neposouvají ji). Úspěch zmizí sám po 5 s, chyba zůstane do zavření. */ ?>
+<div class="toasts">
+    <?php foreach ($flashes as $flash): $isError = $flash['type'] === 'error'; ?>
+        <div class="toast toast-<?= e($flash['type']) ?>" role="<?= $isError ? 'alert' : 'status' ?>"<?= $isError ? '' : ' data-autohide="5000"' ?>>
+            <span class="toast-icon" aria-hidden="true"><?= $isError ? '!' : '✓' ?></span>
+            <p><?= e($flash['message']) ?></p>
+            <button class="toast-close" type="button" aria-label="Zavřít hlášku" hidden>×</button>
+        </div>
+    <?php endforeach; ?>
+</div>
+<?php endif; ?>
 <main id="obsah">
 <?= $content ?>
 </main>
