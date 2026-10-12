@@ -99,6 +99,7 @@ Otevřete odkaz z e-mailu v anonymním okně, nastavte heslo a měli byste skon�
 | „Služba je dočasně nedostupná“ | Aplikace nenašla `config/config.php`, nebo v něm chybí `app.url` / `app.env`. |
 | „Přihlášení zatím není spuštěné“ | V `config.php` chybí `logto.app_id` nebo `logto.app_secret`. |
 | „Přihlášení se nepodařilo ověřit“ | Podívejte se do `var/log/app-<datum>.log`. Častá příčina na Windows: chybí certifikáty pro curl, viz níže. |
+| „Přihlášení se nedokončilo“, v logu `invalid_scope` / *requested scope is not allowed* | Aplikace v Logto je typu **Third-party app**. Založte běžnou: Create application → filtr *Traditional web* → **PHP** (bez štítku Third-party). |
 | Logto hlásí *redirect_uri did not match* | V Logto Console doplňte přesně `http://localhost:8080/callback`. |
 | „Pozvánku se nepodařilo odeslat“ | Detail je v `var/log/`. HTTP 401/403: M2M aplikace nemá roli pro Management API. HTTP 501: chybí e-mailový konektor. HTTP 400/404: špatné ID organizace. |
 | „Tento účet nemá přístup“ | E-mail v `create-admin.php` se liší od e-mailu v Logto, nebo není ověřený. |

@@ -74,6 +74,12 @@ Kód se pokryje jednotkovými testy s vlastními testovacími klíči. SDK zůst
 - Admin nikdy nevidí odkaz s tokenem (jinak by mohl založit účet za pozvaného).
 - Hodnotu `revoked` u stavu jednorázového tokenu dokumentace výslovně neuvádí → ověřit na tenantu.
 
+## Ověřeno ručně 12. 10. 2026 (localhost + tenant vnac13)
+
+- Přihlášení admina přes Authorization Code + PKCE, ID token ES384, propojení účtu z `bin/create-admin.php`: **funguje**.
+- Aplikace v Logto musí být běžná *Traditional web* (např. šablona PHP), **ne Third-party app**;
+  ta odmítá scope `email`/`profile` chybou `invalid_scope` a uživatelům by ukazovala souhlas s předáním údajů.
+
 ## Co ověřit ručně na dev tenantu (krok 0b)
 
 1. Vypnutá registrace a odkaz s one-time tokenem nového uživatele zaregistrují.
