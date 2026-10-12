@@ -31,7 +31,7 @@ final class PublicController
             $router->get($path, fn (): Response => $this->staticPage($path));
         }
         $router->get('/kontakt', $this->contact(...));
-        $router->get('/ochrana-osobnich-udaju', fn (): Response => $this->legal('Ochrana osobních údajů'));
+        $router->get('/ochrana-osobnich-udaju', fn (): Response => $this->page('public/privacy', 'Ochrana osobních údajů'));
         $router->get('/podminky-pouzivani', fn (): Response => $this->legal('Podmínky používání'));
     }
 

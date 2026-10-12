@@ -127,4 +127,15 @@ final class PublicPagesTest extends TestCase
         self::assertStringContainsString('href="tel:+420572000000"', $body);
         self::assertStringNotContainsString('doplníme před spuštěním', $body);
     }
+
+    public function testPrivacyPolicyContainsSuppliedTextAndMarksGaps(): void
+    {
+        $body = AppFactory::create()->handle(new Request('GET', '/ochrana-osobnich-udaju'))->body;
+        self::assertStringContainsString('Zásady ochrany osobních údajů', $body);
+        self::assertStringContainsString('1. Kdo je správcem osobních údajů', $body);
+        self::assertStringContainsString('14. Změny těchto zásad', $body);
+        self::assertStringContainsString('Úřad pro ochranu osobních údajů', $body);
+        self::assertStringContainsString('<mark class="todo">[DOPLNIT ÚPLNÝ NÁZEV PROVOZOVATELE]</mark>', $body, 'nevyplněná místa jsou vidět');
+        self::assertStringNotContainsString('Text připravuje provozovatel', $body);
+    }
 }
