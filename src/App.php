@@ -1,0 +1,139 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App;
+
+use App\Controller\PublicController;
+use App\Http\HttpException;
+use App\Http\Request;
+use App\Http\Response;
+use App\Http\Router;
+use App\Security\Csrf;
+use App\Security\SecurityHeaders;
+use App\Security\Session;
+use App\Support\Config;
+use App\Support\Database;
+use App\Support\ErrorHandler;
+use App\Support\Logger;
+use App\View\View;
+use Closure;
+use Throwable;
+
+/**
+ * Jádro aplikace: spustí session, ověří CSRF u každého POST,
+ * předá požadavek routeru a ke každé odpovědi přidá bezpečnostní hlavičky.
+ */
+final class App
+{
+    public readonly Router $router;
+    public readonly View $view;
+    public readonly Database $db;
+    private ?Session $session = null;
+    private ?Csrf $csrf = null;
+
+    /** @param Closure(): Session $sessionFactory */
+    public function __construct(
+        public readonly Config $config,
+        public readonly Logger $logger,
+        private Closure $sessionFactory,
+        string $projectRoot,
+    ) {
+        $this->router = new Router();
+        $this->view = new View($projectRoot . '/templates', ['config' => $config]);
+        $this->db = new Database($config);
+        $this->registerRoutes();
+    }
+
+    /** Vstupní bod z public/index.php. */
+    public static function boot(string $projectRoot): void
+    {
+        $logger = new Logger($projectRoot . '/var/log');
+        try {
+            $config = Config::fromFile(Config::locate($projectRoot));
+        } catch (Throwable $e) {
+            $logger->error('Konfiguraci nelze načíst', ['message' => $e->getMessage()]);
+            (new Response(ErrorHandler::fallbackPage(503), 503, ['Content-Type' => 'text/html; charset=utf-8']))->send();
+            return;
+        }
+        date_default_timezone_set((string) $config->get('app.timezone', 'Europe/Prague'));
+        ErrorHandler::register($logger, $config->isDebug());
+
+        $app = new self($config, $logger, static fn (): Session => Session::startNative($config), $projectRoot);
+        $app->handle(Request::fromGlobals())->send();
+    }
+
+    public function handle(Request $request): Response
+    {
+        try {
+            $this->session = ($this->sessionFactory)();
+            $this->csrf = new Csrf($this->session);
+            $this->view->share('csrf', $this->csrf);
+            $this->view->share('session', $this->session);
+
+            if (!in_array($request->method, ['GET', 'HEAD', 'POST'], true)) {
+                throw HttpException::methodNotAllowed(['GET', 'HEAD', 'POST']);
+            }
+            if ($request->isPost()) {
+                $submitted = $request->input(Csrf::FIELD) ?? $request->header('x-csrf-token');
+                if (!$this->csrf->isValid($submitted)) {
+                    throw HttpException::csrf();
+                }
+            }
+            $response = $this->router->dispatch($request);
+        } catch (HttpException $e) {
+            $response = $this->errorResponse($e->status, $e->getMessage());
+            foreach ($e->headers as $name => $value) {
+                $response = $response->withHeader($name, $value);
+            }
+        } catch (Throwable $e) {
+            $this->logger->error(get_class($e) . ': ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'path' => $request->path,
+            ]);
+            $detail = $this->config->isDebug() ? get_class($e) . ': ' . $e->getMessage() : null;
+            $response = $this->errorResponse(500, 'Něco se pokazilo. Zkuste to prosím za chvíli znovu.', $detail);
+        }
+
+        if ($request->method === 'HEAD') {
+            $response->body = '';
+        }
+        return SecurityHeaders::apply(
+            $response,
+            $this->config->isHttps(),
+            SecurityHeaders::originOf($this->config->get('logto.endpoint')),
+        );
+    }
+
+    public function session(): Session
+    {
+        return $this->session ?? throw new \LogicException('Session ještě neběží.');
+    }
+
+    public function csrf(): Csrf
+    {
+        return $this->csrf ?? throw new \LogicException('Session ještě neběží.');
+    }
+
+    private function errorResponse(int $status, string $message, ?string $debugDetail = null): Response
+    {
+        try {
+            return Response::html($this->view->render('errors/error', [
+                'title' => $status === 404 ? 'Stránka nenalezena' : 'Chyba',
+                'status' => $status,
+                'message' => $message,
+                'debugDetail' => $debugDetail,
+            ]), $status);
+        } catch (Throwable $e) {
+            $this->logger->error('Chybovou stránku nelze vykreslit: ' . $e->getMessage());
+            return new Response(ErrorHandler::fallbackPage($status), $status, ['Content-Type' => 'text/html; charset=utf-8']);
+        }
+    }
+
+    private function registerRoutes(): void
+    {
+        $public = new PublicController($this);
+        $this->router->get('/', $public->home(...));
+    }
+}

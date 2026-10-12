@@ -1,0 +1,15 @@
+# Pojistka pro hosting, kde nejde nastavit kořen webu na složku public/
+# (např. když se celý projekt nahraje do www na WEDOS).
+# Všechny požadavky se přesměrují do public/, takže src/, config/, var/,
+# templates/ ani migrace nejsou z webu dostupné.
+
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+<IfModule !mod_rewrite.c>
+    Require all denied
+</IfModule>

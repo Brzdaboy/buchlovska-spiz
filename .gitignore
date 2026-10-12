@@ -1,0 +1,17 @@
+# Tajemství a lokální konfigurace
+/config/config.php
+*.local.php
+.env
+.env.*
+
+# Běhová data
+/var/*
+!/var/.gitkeep
+
+# Nástroje
+/vendor/
+/.phpunit.cache/
+.phpunit.result.cache
+.idea/
+.vscode/
+.DS_Store
