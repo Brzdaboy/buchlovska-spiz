@@ -43,6 +43,10 @@ Kód se pokryje jednotkovými testy s vlastními testovacími klíči. SDK zůst
 
 ### 3. Role a MFA
 
+> **Aktualizace 12. 10. 2026:** zadavatel rozhodl MFA zatím nezapínat (viz `docs/ROZHODNUTI.md`).
+> Níže popsané vynucení MFA pro adminy se implementuje jako volba `security.require_admin_mfa`
+> (výchozí `false`), aby šlo před produkcí zapnout bez zásahu do kódu.
+
 - Role tržiště (`producer`, `school`, `admin`) a stav účtu jsou **jen v MySQL**, Logto o nich neví.
 - Admini jsou navíc členy organizace „Buchlovská spíž – správa“ s povinnou MFA.
 - Při každém přihlášení admina aplikace přes Management API zkontroluje, že má MFA aktivní (`GET /api/users/{id}/mfa-verifications`). Bez ní ho do administrace nepustí.
@@ -52,6 +56,14 @@ Kód se pokryje jednotkovými testy s vlastními testovacími klíči. SDK zůst
 
 - Odhlášení je POST s CSRF tokenem: lokální session se zruší a uživatel se přesměruje na `end_session_endpoint`.
 - Blokace se kontroluje při **každém** požadavku z lokální DB. Volitelně se účet pozastaví i v Logto (`PATCH /api/users/{id}/is-suspended`).
+
+## Ověřeno na dev tenantu `vnac13` (12. 10. 2026, veřejné endpointy)
+
+- `signInMode: SignIn` — veřejná registrace je vypnutá.
+- Registrace: e-mail + heslo + ověření e-mailu; přihlášení: e-mail + heslo.
+- ID tokeny jsou podepsané **ES384**; PKCE `S256`; `client_secret_basic` podporováno.
+- Dostupné scopes zahrnují `email`, `urn:logto:scope:organizations`.
+- Issuer: `https://vnac13.logto.app/oidc`.
 
 ## Co ověřit ručně na dev tenantu (krok 0b)
 

@@ -33,6 +33,14 @@ Měkké smazání je samostatný příznak `deleted_at`, ne stav.
 - WEDOS: tarif zatím neznámý; cílíme na PHP 8.1–8.4 a MariaDB 10.6+ / MySQL 8.
 - Práce po krocích; po každém kroku kontrola zadavatelem.
 
+### Logto (dev tenant `https://vnac13.logto.app`)
+
+- Veřejná registrace vypnutá, přihlášení e-mailem a heslem, ověřený stav k 12. 10. 2026.
+- **Dvoufázové ověření (MFA) je vypnuté** na přání zadavatele, i pro administrátory.
+  Odchyluje se to od SPECIFIKACE §5 a README („Administrátor používá vícefaktorové ověření“).
+  Aplikace zatím MFA u adminů nevyžaduje; kontrola se dá později zapnout konfigurací.
+  Před produkcí doporučeno znovu posoudit.
+
 ### Ke schválení klientem
 
 Body 1–2 mění schválenou specifikaci; nechat potvrdit klientem.
