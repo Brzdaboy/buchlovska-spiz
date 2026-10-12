@@ -21,6 +21,10 @@ use App\Service\MarketFilter;
  */
 final class MarketController
 {
+    /** Zobrazení seznamu: hodnota v URL => interní klíč. Volba se pamatuje v session (pro nabídky i poptávky). */
+    public const VIEWS = ['radky' => 'rows', 'dlazdice' => 'tiles'];
+    private const VIEW_SESSION_KEY = 'market_view';
+
     public function __construct(private App $app)
     {
     }
@@ -46,6 +50,7 @@ final class MarketController
         $units = $catalog->activeUnits();
         $filter = MarketFilter::fromQuery($request->query, $catalog->activeCategoryOptions(), $units, $isOffer);
         $result = $isOffer ? $this->market()->offers($filter, today()) : $this->market()->demands($filter, today());
+        $view = $this->view($request);
 
         return Response::html($this->app->view->render('market/index', [
             'title' => $isOffer ? 'Nabídky zemědělců' : 'Poptávky škol',
@@ -55,7 +60,20 @@ final class MarketController
             'result' => $result,
             'categories' => $catalog->activeCategoryOptions(),
             'units' => $units,
+            'view' => $view,
         ]));
+    }
+
+    /** Řádky (výchozí), nebo dlaždice. Volbu z odkazu ?zobrazeni=… si zapamatuje. */
+    private function view(Request $request): string
+    {
+        $session = $this->app->session();
+        $requested = $request->query('zobrazeni');
+        if ($requested !== null && isset(self::VIEWS[$requested])) {
+            $session->set(self::VIEW_SESSION_KEY, $requested);
+        }
+        $stored = $session->get(self::VIEW_SESSION_KEY);
+        return self::VIEWS[is_string($stored) && isset(self::VIEWS[$stored]) ? $stored : 'radky'];
     }
 
     /** @param array<string, string> $params */

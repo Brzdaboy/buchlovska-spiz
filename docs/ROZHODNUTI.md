@@ -14,6 +14,7 @@ Při rozporu mají tato rozhodnutí přednost před `SPECIFIKACE.md`.
 6. **Cenový filtr** jde použít jen spolu s vybranou cenovou jednotkou.
 7. **Jediný stav ručního ukončení:** „Ukončeno“. Žádné koncepty.
 8. **Číselníky bez správy v administraci.** Kategorie a jednotky jsou pevný seznam z migrace (mění §2, §8 a §9: „spravovaný administrátorem“ neplatí). Změna seznamu = nová SQL migrace.
+9. **Tržiště bez fotografií.** Nabídky ani poptávky nemají v seznamu ani v detailu žádný obrázek (mění §8 a §16 – „jednotná univerzální fotografie“). Seznam má dvě zobrazení: řádky (výchozí) a dlaždice; volbu si web pamatuje v session.
 
 ### Stavy nabídky i poptávky
 

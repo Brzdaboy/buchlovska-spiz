@@ -1,7 +1,6 @@
 <?php
 /** @var \App\Domain\ListingType $type */
 /** @var array<string, mixed> $item */
-/** @var bool $isOffer */
 /** @var bool $isOwn */
 $isOffer = $type->key === 'offer';
 $postal = (string) $item['postal_code'];
@@ -20,8 +19,6 @@ $phoneHref = preg_replace('/[^0-9+]/', '', (string) $item['phone']);
 <div class="admin-content detail-grid market-detail">
     <div>
         <div class="card market-detail-main">
-            <img class="market-detail-photo" src="/assets/img/card-960.webp" srcset="/assets/img/card-480.webp 480w, /assets/img/card-960.webp 960w"
-                 sizes="(max-width: 900px) 100vw, 640px" width="960" height="540" alt="">
             <?php if ($isOffer): ?>
                 <p class="market-detail-price"><?= e(format_price((string) $item['unit_price'], (string) $item['price_unit'])) ?></p>
                 <dl class="contact-list">

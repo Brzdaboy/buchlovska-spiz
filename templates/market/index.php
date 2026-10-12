@@ -5,6 +5,7 @@
 /** @var array{items: list<array<string, mixed>>, total: int, page: int, pages: int} $result */
 /** @var list<array{id: int, name: string, slug: string}> $categories */
 /** @var array<int, string> $units */
+/** @var string $view 'rows' | 'tiles' */
 $isOffer = $type->key === 'offer';
 $base = '/' . $type->segment();
 $in = $filter->input;
@@ -100,8 +101,26 @@ $ownLink = $user['role'] === ($isOffer ? 'producer' : 'school')
         </details>
     </form>
 
+    <?php
+    $viewLink = static function (string $key) use ($base, $filter): string {
+        $query = $filter->queryString();
+        return $base . ($query === '' ? '?' : $query . '&') . 'zobrazeni=' . $key;
+    };
+    ?>
+    <div class="market-toolbar">
     <p class="market-count" role="status"><?= $filter->isActive() ? 'Nalezeno' : 'Celkem' ?> <strong><?= $count ?></strong> <?= $noun ?><?= $result['pages'] > 1 ? ' · strana ' . $result['page'] . ' z ' . $result['pages'] : '' ?>
         <?php if ($filter->isActive() || $errors !== []): ?> · <a href="<?= e($base) ?>">Zrušit hledání a filtry</a><?php endif; ?></p>
+    <nav class="view-switch" aria-label="Zobrazení">
+        <a href="<?= e($viewLink('radky')) ?>"<?= $view === 'rows' ? ' aria-current="true"' : '' ?>>
+            <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+            Řádky
+        </a>
+        <a href="<?= e($viewLink('dlazdice')) ?>"<?= $view === 'tiles' ? ' aria-current="true"' : '' ?>>
+            <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+            Dlaždice
+        </a>
+    </nav>
+    </div>
 
     <?php if ($items === []): ?>
         <div class="card empty-state">
@@ -115,7 +134,7 @@ $ownLink = $user['role'] === ($isOffer ? 'producer' : 'school')
             <?php endif; ?>
         </div>
     <?php else: ?>
-        <?php require __DIR__ . '/cards.php'; ?>
+        <?php require __DIR__ . '/list.php'; ?>
         <?php if ($result['pages'] > 1): ?>
             <nav class="pagination" aria-label="Stránkování">
                 <?php if ($result['page'] > 1): ?>

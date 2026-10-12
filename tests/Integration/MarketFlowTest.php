@@ -76,7 +76,7 @@ final class MarketFlowTest extends DatabaseTestCase
 
     private static function cards(Response $response): int
     {
-        return substr_count($response->body, 'class="market-card"');
+        return substr_count($response->body, 'class="market-item"');
     }
 
     // --- přístup a viditelnost ------------------------------------------------------------
@@ -271,6 +271,24 @@ final class MarketFlowTest extends DatabaseTestCase
         self::assertSame(2, self::cards($this->get('/nabidky', ['jednotka' => 'kg'])), 'jednotka sama filtruje cenovou jednotku');
         self::assertSame(1, self::cards($this->get('/nabidky', ['cena_do' => '14,50', 'jednotka' => 'kg'])));
         self::assertStringContainsString('Zadejte cenu v Kč', $this->get('/nabidky', ['cena_do' => 'levně', 'jednotka' => 'kg'])->body);
+    }
+
+    public function testRowsByDefaultTilesOnRequestAndRemembered(): void
+    {
+        $this->offer();
+        $this->demand();
+        $body = $this->get('/nabidky')->body;
+        self::assertStringContainsString('<ul class="market-rows">', $body);
+        self::assertStringNotContainsString('<img', substr($body, strpos($body, '<main')), 'bez fotografií');
+
+        self::assertStringContainsString('<ul class="market-tiles">', $this->get('/nabidky', ['zobrazeni' => 'dlazdice'])->body);
+        self::assertStringContainsString('<ul class="market-tiles">', $this->get('/nabidky')->body, 'volba se pamatuje');
+        self::assertStringContainsString('<ul class="market-tiles">', $this->get('/poptavky')->body, 'i pro poptávky');
+        self::assertStringContainsString('<ul class="market-rows">', $this->get('/poptavky', ['zobrazeni' => 'radky'])->body);
+        self::assertStringContainsString('<ul class="market-rows">', $this->get('/nabidky', ['zobrazeni' => '<x>'])->body, 'neplatná hodnota se ignoruje');
+
+        $switch = $this->get('/nabidky', ['q' => 'brambory'])->body;
+        self::assertStringContainsString('href="/nabidky?q=brambory&amp;zobrazeni=dlazdice"', $switch, 'přepínač drží hledání');
     }
 
     public function testFiltersAreCollapsedUntilUsed(): void
