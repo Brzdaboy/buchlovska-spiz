@@ -35,7 +35,7 @@ Web poběží na <http://localhost:8080>.
 
 ### Databáze
 
-Podporované: **MariaDB 10.6+** nebo **MySQL 8.0.16+** (starší verze nevynucují omezení `CHECK`).
+Podporované: **MariaDB 10.4+** (XAMPP) nebo **MySQL 8.0.16+** (starší verze nevynucují omezení `CHECK`).
 
 ```sql
 CREATE DATABASE buchlovska_spiz CHARACTER SET utf8mb4 COLLATE utf8mb4_czech_ci;
