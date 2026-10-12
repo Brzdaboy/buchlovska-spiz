@@ -9,17 +9,14 @@ use App\Domain\ListingState;
 use App\Http\Response;
 use App\Http\Router;
 use App\Repository\DemandRepository;
-use App\Repository\MarketRepository;
 use App\Repository\OfferRepository;
 
 /**
- * Dashboard přihlášeného uživatele podle role (SPECIFIKACE §11):
- * souhrn vlastních záznamů podle stavu, nejnovější nabídky a poptávky, kontakty z profilu.
+ * Můj portál: jen vlastní záznamy (s jejich stavem) a vlastní kontaktní údaje.
+ * Cizí nabídky a poptávky jsou na stránkách Nabídky a Poptávky.
  */
 final class PortalController
 {
-    private const LATEST = 4;
-
     public function __construct(private App $app)
     {
     }
@@ -45,8 +42,9 @@ final class PortalController
             default => [],
         };
         $summary = ['active' => 0, 'inactive' => 0, 'attention' => 0];
-        foreach ($own as $row) {
+        foreach ($own as $i => $row) {
             $state = ListingState::effective((string) $row['status'], $row[$role === 'producer' ? 'available_until' : 'needed_until'], $today);
+            $own[$i]['state'] = $state;
             $summary[match ($state) {
                 ListingState::ACTIVE => 'active',
                 ListingState::WITHDRAWN, ListingState::RESUBMITTED => 'attention',
@@ -54,15 +52,12 @@ final class PortalController
             }]++;
         }
 
-        $market = new MarketRepository($pdo);
         return Response::html($this->app->view->render('portal/dashboard', [
             'title' => 'Můj portál',
             'user' => $user,
             'profile' => $profile,
             'summary' => $summary,
-            'ownCount' => count($own),
-            'latestOffers' => $market->latestOffers(self::LATEST, $today),
-            'latestDemands' => $market->latestDemands(self::LATEST, $today),
+            'own' => $own,
         ]));
     }
 }

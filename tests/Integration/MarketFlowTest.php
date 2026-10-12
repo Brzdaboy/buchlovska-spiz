@@ -329,24 +329,30 @@ final class MarketFlowTest extends DatabaseTestCase
 
     // --- dashboard ------------------------------------------------------------------------
 
-    public function testDashboardShowsLatestAndOwnSummary(): void
+    public function testPortalShowsOnlyOwnListingsAndDetails(): void
     {
-        $this->offer(['product_name' => 'Nejnovější brambory']);
-        $this->offer(['product_name' => 'Ukončené mrkve', 'status' => 'ended']);
-        $this->demand(['product_name' => 'Hledáme jablka']);
+        $this->offer(['product_name' => 'Moje brambory']);
+        $this->offer(['product_name' => 'Moje ukončené mrkve', 'status' => 'ended']);
+        $other = $this->producerWithProfile('Cizí farma', '600 999 999', 'cizi@example.cz');
+        $this->insert('offers', $this->offerRow($other, ['product_name' => 'Cizí jablka']));
+        $this->demand(['product_name' => 'Hledáme hrušky']);
 
         $this->as($this->producer, 'producer');
         $body = $this->get('/portal')->body;
-        self::assertStringContainsString('Nejnovější brambory', $body);
-        self::assertStringContainsString('Hledáme jablka', $body);
-        self::assertStringNotContainsString('Ukončené mrkve', $body);
-        self::assertLessThan(strpos($body, 'Nejnovější nabídky'), strpos($body, 'Nejnovější poptávky škol'), 'zemědělci nejdřív poptávky');
+        self::assertStringContainsString('Moje brambory', $body);
+        self::assertStringContainsString('Moje ukončené mrkve', $body, 'vlastní záznamy včetně neaktivních');
+        self::assertStringNotContainsString('Cizí jablka', $body);
+        self::assertStringNotContainsString('Hledáme hrušky', $body);
+        self::assertStringNotContainsString('Nejnovější', $body);
         self::assertMatchesRegularExpression('#badge-ok">1</span> zveřejněno#', $body);
         self::assertMatchesRegularExpression('#badge-muted">1</span> ukončeno#', $body);
+        self::assertStringContainsString('Moje údaje', $body);
+        self::assertStringContainsString('+420 600 123 456', $body);
 
         $this->as($this->school, 'school');
         $body = $this->get('/portal')->body;
-        self::assertLessThan(strpos($body, 'Nejnovější poptávky škol'), strpos($body, 'Nejnovější nabídky'), 'škole nejdřív nabídky');
+        self::assertStringContainsString('Hledáme hrušky', $body);
+        self::assertStringNotContainsString('Moje brambory', $body);
         self::assertStringContainsString('Přidat poptávku', $body);
     }
 }

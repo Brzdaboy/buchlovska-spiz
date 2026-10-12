@@ -12,7 +12,7 @@ use PDO;
  *
  * Záznam je vidět, když: stav je `active`, není smazaný, nevypršel (konec platnosti
  * je prázdný nebo dnes či později) a autor má aktivní účet s vyplněným profilem.
- * Stejná podmínka platí pro seznam, detail i dashboard – na jednom místě.
+ * Stejná podmínka platí pro seznam i detail – na jednom místě.
  */
 final class MarketRepository
 {
@@ -70,12 +70,6 @@ final class MarketRepository
         return $this->page(self::OFFER_COLUMNS, self::OFFER_FROM . $where, $params, 'o', $filter->page);
     }
 
-    /** @return list<array<string, mixed>> nejnovější zveřejněné nabídky (dashboard) */
-    public function latestOffers(int $limit, string $today): array
-    {
-        return $this->page(self::OFFER_COLUMNS, self::OFFER_FROM, [$today], 'o', 1, $limit)['items'];
-    }
-
     /** @return array<string, mixed>|null */
     public function offer(int $id, string $today): ?array
     {
@@ -119,12 +113,6 @@ final class MarketRepository
             $params[] = $filter->from;
         }
         return $this->page(self::DEMAND_COLUMNS, self::DEMAND_FROM . $where, $params, 'd', $filter->page);
-    }
-
-    /** @return list<array<string, mixed>> nejnovější zveřejněné poptávky (dashboard) */
-    public function latestDemands(int $limit, string $today): array
-    {
-        return $this->page(self::DEMAND_COLUMNS, self::DEMAND_FROM, [$today], 'd', 1, $limit)['items'];
     }
 
     /** @return array<string, mixed>|null */

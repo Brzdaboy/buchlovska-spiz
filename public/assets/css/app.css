@@ -481,3 +481,14 @@ ul { padding-left: 1.2em; }
 /* Volba role v pozvánce: dvě možnosti vedle sebe, výška jako textové pole. */
 .form-inline .radio-row { min-height: 46px; align-items: center; margin-top: 9px; }
 .form-inline .radio { margin-right: 0; white-space: nowrap; }
+.own-listings .own-summary { margin: 0; }
+.own-list { list-style: none; padding: 0; margin: 20px 0 0; border-top: 1px solid var(--line); }
+.own-list li { display: grid; grid-template-columns: 128px minmax(0, 1fr) auto; gap: 6px 16px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.own-list li:last-child { border-bottom: 0; padding-bottom: 0; }
+.own-list .badge { justify-self: start; }
+.own-name { font-weight: 700; color: var(--ink); }
+.own-facts { font-size: 14px; text-align: right; }
+@media (max-width: 640px) {
+  .own-list li { grid-template-columns: 1fr; }
+  .own-facts { text-align: left; }
+}
