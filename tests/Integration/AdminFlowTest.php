@@ -65,12 +65,11 @@ final class AdminFlowTest extends DatabaseTestCase
         $school = $this->createUser('school');
         foreach ([[$this->producer, 'producer'], [$school, 'school']] as [$id, $role]) {
             $this->as($id, 'admin'); // ani podvržená role v session nepomůže
-            foreach (['/admin', '/admin/zaznamy', '/admin/uzivatele', '/admin/ciselniky', "/admin/nabidky/{$offer}", "/admin/uzivatele/{$this->producer}"] as $path) {
+            foreach (['/admin', '/admin/zaznamy', '/admin/uzivatele', "/admin/nabidky/{$offer}", "/admin/uzivatele/{$this->producer}"] as $path) {
                 self::assertSame(403, $this->get($path)->status, "{$role} GET {$path}");
             }
             self::assertSame(403, $this->post("/admin/nabidky/{$offer}/stahnout", ['reason' => 'Pokus o zneužití'])->status);
             self::assertSame(403, $this->post("/admin/uzivatele/{$this->producer}/blokovat")->status);
-            self::assertSame(403, $this->post('/admin/kategorie', ['name' => 'Hack'])->status);
         }
         self::assertSame('active', $this->value("SELECT status FROM offers WHERE id = {$offer}"));
         self::assertSame('active', $this->value("SELECT status FROM users WHERE id = {$this->producer}"));
@@ -212,41 +211,15 @@ final class AdminFlowTest extends DatabaseTestCase
         ]);
     }
 
-    // --- číselníky -------------------------------------------------------------------------------
+    // --- číselníky ----------------------------------------------------------------------------
 
-    public function testCategoryManagement(): void
+    public function testCatalogsAreNotEditableInAdministration(): void
     {
-        $this->post('/admin/kategorie', ['name' => 'Byliny a koření', 'sort_order' => '110']);
-        $id = (int) $this->value("SELECT id FROM categories WHERE slug = 'byliny-a-koreni'");
-        self::assertGreaterThan(0, $id);
-
-        $this->post('/admin/kategorie', ['name' => 'Byliny a koření']);
-        self::assertStringContainsString('už existuje', AppFactory::$sessionData['_flash'][0]['message'] ?? '');
-
-        // Deaktivovaná kategorie se v nové nabídce nenabízí, použitá ji ale podrží.
-        $offer = $this->producerOffer(['category_id' => (string) $id]);
-        $this->post("/admin/kategorie/{$id}", ['name' => 'Byliny a koření', 'sort_order' => '110']);
-        self::assertSame(0, (int) $this->value("SELECT is_active FROM categories WHERE id = {$id}"));
-
-        $this->as($this->producer, 'producer');
-        self::assertStringNotContainsString('Byliny a koření</option>', $this->get('/moje-nabidky/nova')->body);
-        self::assertStringContainsString('selected>Původní kategorie', $this->get("/moje-nabidky/{$offer}/upravit")->body);
-        self::assertSame(422, $this->post('/moje-nabidky', Fixtures::offerForm(['category_id' => (string) $id]))->status);
-    }
-
-    public function testUnitManagement(): void
-    {
-        $this->post('/admin/jednotky', ['code' => 'bal', 'label' => 'balení', 'sort_order' => '70']);
-        self::assertSame('balení', $this->value("SELECT label FROM units WHERE code = 'bal'"));
-
-        $this->post('/admin/jednotky', ['code' => '<x>', 'label' => 'zlo']);
-        self::assertSame(0, (int) $this->value("SELECT COUNT(*) FROM units WHERE label = 'zlo'"));
-
-        $kg = (int) $this->value("SELECT id FROM units WHERE code = 'kg'");
-        $this->post("/admin/jednotky/{$kg}", ['label' => 'kilogram', 'sort_order' => '10', 'is_active' => '1']);
-        self::assertSame('kg', $this->value("SELECT code FROM units WHERE id = {$kg}"), 'zkratka se nemění');
-
-        $catalog = $this->get('/admin/ciselniky')->body;
-        self::assertStringContainsString('balení', $catalog);
+        // Kategorie a jednotky jsou pevné (ROZHODNUTI č. 8), správa číselníků v administraci není.
+        self::assertSame(404, $this->get('/admin/ciselniky')->status);
+        self::assertSame(404, $this->post('/admin/kategorie', ['name' => 'Byliny'])->status);
+        self::assertSame(404, $this->post('/admin/jednotky', ['code' => 'bal', 'label' => 'balení'])->status);
+        self::assertSame(0, (int) $this->value("SELECT COUNT(*) FROM categories WHERE name = 'Byliny'"));
+        self::assertStringNotContainsString('Číselníky', $this->get('/admin')->body);
     }
 }

@@ -13,6 +13,7 @@ Při rozporu mají tato rozhodnutí přednost před `SPECIFIKACE.md`.
 5. **Reaktivace s prošlým datem** vyžaduje nové budoucí datum. Proběhne okamžitě, bez schválení.
 6. **Cenový filtr** jde použít jen spolu s vybranou cenovou jednotkou.
 7. **Jediný stav ručního ukončení:** „Ukončeno“. Žádné koncepty.
+8. **Číselníky bez správy v administraci.** Kategorie a jednotky jsou pevný seznam z migrace (mění §2, §8 a §9: „spravovaný administrátorem“ neplatí). Změna seznamu = nová SQL migrace.
 
 ### Stavy nabídky i poptávky
 

@@ -8,7 +8,6 @@ use App\Auth\CurrentUser;
 use App\Auth\LoginService;
 use App\Auth\LogtoManagement;
 use App\Auth\OidcClient;
-use App\Controller\AdminCatalogController;
 use App\Controller\AdminController;
 use App\Controller\AdminListingController;
 use App\Controller\AdminUserController;
@@ -256,6 +255,5 @@ final class App
         (new AdminController($this))->register($this->router);
         (new AdminListingController($this))->register($this->router);
         (new AdminUserController($this))->register($this->router);
-        (new AdminCatalogController($this))->register($this->router);
     }
 }

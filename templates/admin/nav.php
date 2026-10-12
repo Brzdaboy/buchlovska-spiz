@@ -10,7 +10,6 @@ $adminNavItems = [
     '/admin/zaznamy' => 'Záznamy',
     '/admin/uzivatele' => 'Uživatelé',
     '/admin/pozvanky' => 'Pozvánky',
-    '/admin/ciselniky' => 'Číselníky',
 ];
 $adminNavActive = '/admin';
 foreach (array_keys($adminNavItems) as $adminNavPath) {

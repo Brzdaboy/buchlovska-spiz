@@ -340,8 +340,6 @@ ul { padding-left: 1.2em; }
 .stack { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
 .stack p { margin: 8px 0 0; }
 .small-print { font-size: 13px; margin: 14px 0 0; }
-.catalog-table input:not([type="checkbox"]) { width: 100%; border: 1px solid #c9d2c6; border-radius: 6px; padding: 8px 10px; }
-.catalog-table input.short { max-width: 80px; }
 .field-short { flex: 0 1 110px !important; }
 .form-inline input { width: 100%; border: 1px solid #c9d2c6; border-radius: 8px; padding: 11px 12px; min-height: 46px; background: #fff; }
 @media (max-width: 900px) {
