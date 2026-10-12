@@ -18,7 +18,7 @@ use App\Repository\OfferRepository;
  */
 final class PortalController
 {
-    private const LATEST = 3;
+    private const LATEST = 4;
 
     public function __construct(private App $app)
     {
