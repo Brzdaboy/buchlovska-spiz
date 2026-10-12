@@ -46,7 +46,7 @@ final class ProfileFlowTest extends DatabaseTestCase
         return $id;
     }
 
-    private function status(int $id): string
+    private function userStatus(int $id): string
     {
         return (string) $this->db()->query("SELECT status FROM users WHERE id = {$id}")->fetchColumn();
     }
@@ -64,7 +64,7 @@ final class ProfileFlowTest extends DatabaseTestCase
         $response = $this->post('/profil', Fixtures::producerProfile(['website' => 'farma.cz']));
 
         self::assertSame('/portal', $response->headers['Location']);
-        self::assertSame('active', $this->status($id));
+        self::assertSame('active', $this->userStatus($id));
         $profile = $this->db()->query("SELECT * FROM producer_profiles WHERE user_id = {$id}")->fetch();
         self::assertSame('68708', $profile['postal_code']);
         self::assertSame('https://farma.cz', $profile['website']);
@@ -90,7 +90,7 @@ final class ProfileFlowTest extends DatabaseTestCase
             'municipality' => 'Buchlovice', 'postal_code' => '68708', 'phone' => '572 000 000',
             'public_email' => 'jidelna@zs.cz', 'privacy_consent' => '1', 'contact_publication_consent' => '1',
         ]);
-        self::assertSame('active', $this->status($id));
+        self::assertSame('active', $this->userStatus($id));
         self::assertSame('ZŠ a MŠ Buchlovice', $this->db()->query("SELECT school_name FROM school_profiles WHERE user_id = {$id}")->fetchColumn());
     }
 
@@ -106,7 +106,7 @@ final class ProfileFlowTest extends DatabaseTestCase
         self::assertStringContainsString('aria-invalid="true"', $response->body);
         self::assertStringContainsString('value="&lt;script&gt;alert(1)&lt;/script&gt;"', $response->body, 'zadaná hodnota zůstane, escapovaná');
         self::assertStringNotContainsString('<script>alert(1)', $response->body);
-        self::assertSame('profile_incomplete', $this->status($id));
+        self::assertSame('profile_incomplete', $this->userStatus($id));
         self::assertSame(0, (int) $this->db()->query('SELECT COUNT(*) FROM producer_profiles')->fetchColumn());
     }
 
@@ -125,7 +125,7 @@ final class ProfileFlowTest extends DatabaseTestCase
         $row = $this->db()->query("SELECT phone, privacy_consent_at FROM producer_profiles WHERE user_id = {$id}")->fetch();
         self::assertSame('777 111 222', $row['phone']);
         self::assertSame($consent, $row['privacy_consent_at']);
-        self::assertSame('active', $this->status($id));
+        self::assertSame('active', $this->userStatus($id));
         self::assertSame(1, (int) $this->db()->query("SELECT COUNT(*) FROM audit_log WHERE action = 'profile.updated'")->fetchColumn());
     }
 
@@ -139,8 +139,8 @@ final class ProfileFlowTest extends DatabaseTestCase
 
         self::assertSame(422, $response->status);
         self::assertStringContainsString('už v Buchlovské spíži má účet', $response->body);
-        self::assertSame('profile_incomplete', $this->status($id));
-        self::assertSame('active', $this->status($other));
+        self::assertSame('profile_incomplete', $this->userStatus($id));
+        self::assertSame('active', $this->userStatus($other));
     }
 
     public function testAdminHasNoOrganizationProfile(): void
