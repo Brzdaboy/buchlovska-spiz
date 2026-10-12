@@ -164,6 +164,37 @@ final class OidcClientTest extends TestCase
         self::assertSame(FakeLogto::ENDPOINT . '/oidc/session/end?client_id=test-app&post_logout_redirect_uri=https%3A%2F%2Fspiz.test%2F', $url);
     }
 
+    public function testKeyCoordinateWithoutLeadingZeroIsAccepted(): void
+    {
+        // Najdeme klíč, jehož souřadnice x začíná nulovým bajtem, a pošleme ji zkrácenou.
+        for ($i = 0; $i < 5000; $i++) {
+            $key = openssl_pkey_new(['private_key_type' => OPENSSL_KEYTYPE_EC, 'curve_name' => 'secp384r1']);
+            $d = openssl_pkey_get_details($key);
+            $x = str_pad($d['ec']['x'], 48, "\x00", STR_PAD_LEFT);
+            if ($x[0] === "\x00") {
+                break;
+            }
+        }
+        self::assertSame("\x00", $x[0], 'nepodařilo se najít vhodný klíč');
+        $jwks = [[
+            'kty' => 'EC', 'crv' => 'P-384', 'kid' => 'k',
+            'x' => Jwt::base64UrlEncode(ltrim($x, "\x00")),
+            'y' => Jwt::base64UrlEncode(str_pad($d['ec']['y'], 48, "\x00", STR_PAD_LEFT)),
+        ]];
+        $input = Jwt::base64UrlEncode('{"alg":"ES384","kid":"k"}') . '.' . Jwt::base64UrlEncode('{"sub":"z"}');
+        openssl_sign($input, $der, $key, OPENSSL_ALGO_SHA384);
+
+        self::assertSame('z', Jwt::verify($input . '.' . Jwt::base64UrlEncode(Jwt::derToRaw($der, 48)), $jwks)['claims']['sub']);
+    }
+
+    public function testOversizedKeyCoordinateIsRejected(): void
+    {
+        $jwk = $this->logto->jwks()[0];
+        $jwk['x'] = Jwt::base64UrlEncode("\x01" . Jwt::base64UrlDecode($jwk['x']));
+        $this->expectException(AuthException::class);
+        Jwt::verify($this->token(), [$jwk]);
+    }
+
     public function testSignatureConversionRoundTrip(): void
     {
         for ($i = 0; $i < 20; $i++) {

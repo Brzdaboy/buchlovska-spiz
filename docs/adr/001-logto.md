@@ -65,6 +65,15 @@ Kód se pokryje jednotkovými testy s vlastními testovacími klíči. SDK zůst
 - Dostupné scopes zahrnují `email`, `urn:logto:scope:organizations`.
 - Issuer: `https://vnac13.logto.app/oidc`.
 
+## Implementace pozvánek (krok 5)
+
+- `POST /api/one-time-tokens` (`expiresIn = 604800`), ID tokenu se ukládá do `invitations.logto_one_time_token_id`, token samotný nikdy.
+- `POST /api/organization-invitations` s `messagePayload.link = /pozvanka?id=…&token=…` (Logto pošle e-mail).
+- Zrušení / opětovné odeslání: `PUT …/one-time-tokens/{id}/status` (`revoked`) a `PUT …/organization-invitations/{id}/status` (`Revoked`); chyba Logto zde není kritická, přístup stejně hlídá lokální pozvánka.
+- Po propojení účtu: `PUT …/organization-invitations/{id}/status` (`Accepted`, `acceptedUserId`).
+- Admin nikdy nevidí odkaz s tokenem (jinak by mohl založit účet za pozvaného).
+- Hodnotu `revoked` u stavu jednorázového tokenu dokumentace výslovně neuvádí → ověřit na tenantu.
+
 ## Co ověřit ručně na dev tenantu (krok 0b)
 
 1. Vypnutá registrace a odkaz s one-time tokenem nového uživatele zaregistrují.

@@ -40,6 +40,9 @@ return [
         // Aplikace typu "Machine-to-machine" s přístupem k Management API
         'm2m_app_id' => '',
         'm2m_app_secret' => '',
-        'management_resource' => 'https://<tenant-id>.logto.app/api',
+        // Pro Logto Cloud je to vždy https://default.logto.app/api
+        'management_resource' => 'https://default.logto.app/api',
+        // Organizace "Buchlovská spíž – členové" (Logto Console → Organizations, ID z detailu)
+        'members_organization_id' => '',
     ],
 ];

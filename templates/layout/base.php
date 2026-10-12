@@ -37,6 +37,9 @@ $current = static fn (string $path): string => $path === $currentPath ? ' aria-c
             <a href="<?= e($path) ?>"<?= $current($path) ?>><?= e($label) ?></a>
         <?php endforeach; ?>
         <?php if ($signedIn): ?>
+            <?php if ($session->get('user_role') === 'admin'): ?>
+                <a href="/admin"<?= $current('/admin') ?>>Administrace</a>
+            <?php endif; ?>
             <a class="button small" href="/portal"<?= $current('/portal') ?>>Můj portál</a>
         <?php else: ?>
             <a class="button small" href="/prihlaseni"<?= $current('/prihlaseni') ?>>Přihlásit se</a>

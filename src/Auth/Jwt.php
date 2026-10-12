@@ -114,13 +114,17 @@ final class Jwt
     /** @param array<string, mixed> $jwk */
     private static function ecJwkToPem(array $jwk): string
     {
-        $x = self::base64UrlDecode((string) ($jwk['x'] ?? ''));
-        $y = self::base64UrlDecode((string) ($jwk['y'] ?? ''));
-        $oids = [
-            'P-256' => '06082a8648ce3d030107',   // prime256v1
-            'P-384' => '06052b81040022',         // secp384r1
+        $curves = [
+            'P-256' => ['06082a8648ce3d030107', 32],   // prime256v1
+            'P-384' => ['06052b81040022', 48],         // secp384r1
         ];
-        $curveOid = $oids[$jwk['crv'] ?? ''] ?? throw new AuthException('Nepodporovaná křivka.');
+        [$curveOid, $size] = $curves[$jwk['crv'] ?? ''] ?? throw new AuthException('Nepodporovaná křivka.');
+        // Souřadnice musí mít plnou délku; kratší (bez úvodních nul) doplníme.
+        $x = str_pad(self::base64UrlDecode((string) ($jwk['x'] ?? '')), $size, "\x00", STR_PAD_LEFT);
+        $y = str_pad(self::base64UrlDecode((string) ($jwk['y'] ?? '')), $size, "\x00", STR_PAD_LEFT);
+        if (strlen($x) !== $size || strlen($y) !== $size) {
+            throw new AuthException('Neplatný veřejný klíč.');
+        }
         $algorithm = self::der(0x30, hex2bin('06072a8648ce3d0201') . hex2bin($curveOid)); // id-ecPublicKey
         $publicKey = self::der(0x03, "\x00\x04" . $x . $y);
         return self::pem(self::der(0x30, $algorithm . $publicKey));

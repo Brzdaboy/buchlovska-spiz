@@ -71,6 +71,8 @@ final class CurrentUser
         $this->session->regenerate();
         $this->session->clear();
         $this->session->set(self::SESSION_KEY, (int) $user['id']);
+        // Jen pro zobrazení navigace; oprávnění se vždy ověřují z databáze.
+        $this->session->set('user_role', (string) $user['role']);
         $this->user = $user;
     }
 

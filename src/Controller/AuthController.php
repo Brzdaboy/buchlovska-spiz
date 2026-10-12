@@ -32,6 +32,7 @@ final class AuthController
     {
         $router->get('/prihlaseni', $this->login(...));
         $router->get('/callback', $this->callback(...));
+        $router->get('/pozvanka', $this->acceptInvitation(...));
         $router->post('/odhlaseni', $this->logout(...));
     }
 
@@ -45,21 +46,66 @@ final class AuthController
         if ($oidc === null) {
             return $this->page('public/login-placeholder', 'Přihlášení', [], 200);
         }
+        return $this->redirectToLogto($oidc, []);
+    }
 
+    /**
+     * Odkaz z e-mailové pozvánky: ověří lokální pozvánku a pošle uživatele do Logto
+     * s jednorázovým tokenem (registrace funguje i při vypnuté veřejné registraci).
+     */
+    public function acceptInvitation(Request $request): Response
+    {
+        $oidc = $this->app->oidc() ?? throw HttpException::notFound();
+        $id = $request->query('id');
+        $token = $request->query('token');
+        if (!is_string($id) || !ctype_digit($id) || !is_string($token) || !preg_match('/^[A-Za-z0-9_-]{8,256}$/', $token)) {
+            return $this->invitationProblem('Odkaz z pozvánky je neúplný. Zkopírujte ho prosím z e-mailu celý.');
+        }
+        $invitation = $this->app->invitations()->findById((int) $id);
+        $expired = $invitation !== null && strtotime((string) $invitation['expires_at'] . ' UTC') <= time();
+
+        if ($invitation === null || $invitation['status'] === 'revoked') {
+            return $this->invitationProblem('Tato pozvánka už neplatí. Pokud jste dostali novější, použijte odkaz z ní.');
+        }
+        if ($invitation['status'] === 'accepted') {
+            return Response::redirect('/prihlaseni');
+        }
+        if ($invitation['status'] === 'expired' || $expired) {
+            return $this->invitationProblem('Platnost pozvánky vypršela. Požádejte správce o novou.');
+        }
+
+        // Případné staré přihlášení v tomto prohlížeči ukončíme.
+        $this->app->auth()->signOut();
+        return $this->redirectToLogto($oidc, [
+            'one_time_token' => $token,
+            'login_hint' => (string) $invitation['email'],
+        ], (int) $invitation['id']);
+    }
+
+    /** @param array<string, string> $extraParams */
+    private function redirectToLogto(OidcClient $oidc, array $extraParams, ?int $invitationId = null): Response
+    {
         $pending = [
             'state' => OidcClient::randomToken(),
             'nonce' => OidcClient::randomToken(),
             'verifier' => OidcClient::randomToken(),
             'created' => time(),
+            'invitation_id' => $invitationId,
         ];
-        $session->set(self::PENDING_KEY, $pending);
+        $this->app->session()->set(self::PENDING_KEY, $pending);
 
         return Response::redirectExternal($oidc->authorizationUrl(
             $this->app->absoluteUrl('/callback'),
             $pending['state'],
             $pending['nonce'],
             $pending['verifier'],
+            $extraParams,
         ));
+    }
+
+    private function invitationProblem(string $message): Response
+    {
+        return $this->page('auth/invitation-problem', 'Pozvánka', ['message' => $message], 410);
     }
 
     public function callback(Request $request): Response
@@ -100,6 +146,9 @@ final class AuthController
 
         $this->app->auth()->signIn($user);
         $this->app->users()->touchLogin((int) $user['id']);
+        if (($pending['invitation_id'] ?? null) !== null) {
+            $this->app->invitationService()?->markAcceptedInLogto((int) $user['id'], (string) $claims['sub']);
+        }
         return Response::redirect('/portal');
     }
 

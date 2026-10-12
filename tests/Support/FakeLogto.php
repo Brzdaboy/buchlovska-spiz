@@ -26,6 +26,9 @@ final class FakeLogto implements HttpClient
     /** Claims, které token endpoint vloží do příštího ID tokenu (přepíší výchozí). */
     public array $nextClaims = [];
     public int $tokenStatus = 200;
+    /** Simulace selhání vytvoření organizační pozvánky (např. chybí e-mailový konektor). */
+    public bool $failOrganizationInvitation = false;
+    private int $sequence = 0;
     public ?string $issuerOverride = null;
 
     public function __construct()
@@ -104,6 +107,9 @@ final class FakeLogto implements HttpClient
         if ($url !== self::ENDPOINT . '/oidc/token') {
             return ['status' => 404, 'body' => '{}'];
         }
+        if (($form['grant_type'] ?? '') === 'client_credentials') {
+            return $this->json(['access_token' => 'm2m-access-token', 'expires_in' => 3600, 'token_type' => 'Bearer']);
+        }
         if ($this->tokenStatus !== 200) {
             return ['status' => $this->tokenStatus, 'body' => '{"error":"invalid_grant"}'];
         }
@@ -113,8 +119,34 @@ final class FakeLogto implements HttpClient
 
     public function sendJson(string $method, string $url, array $json, array $headers = []): array
     {
-        $this->requests[] = ['method' => $method, 'url' => $url, 'headers' => $headers];
+        $this->requests[] = ['method' => $method, 'url' => $url, 'json' => $json, 'headers' => $headers];
+        if (($headers['Authorization'] ?? '') !== 'Bearer m2m-access-token') {
+            return ['status' => 401, 'body' => '{}'];
+        }
+        $path = substr($url, strlen(self::ENDPOINT));
+        $this->sequence++;
+        if ($method === 'POST' && $path === '/api/one-time-tokens') {
+            return ['status' => 201, 'body' => (string) json_encode(['id' => 'ott-' . $this->sequence, 'token' => 'TOKEN' . $this->sequence . 'abcdefgh'])];
+        }
+        if ($method === 'POST' && $path === '/api/organization-invitations') {
+            if ($this->failOrganizationInvitation) {
+                return ['status' => 501, 'body' => '{"message":"No email connector is configured for the tenant."}'];
+            }
+            return ['status' => 201, 'body' => (string) json_encode(['id' => 'inv-' . $this->sequence, 'status' => 'Pending'])];
+        }
+        if ($method === 'PUT' && preg_match('#^/api/(one-time-tokens|organization-invitations)/[^/]+/status$#', $path)) {
+            return ['status' => 200, 'body' => '{}'];
+        }
         return ['status' => 404, 'body' => '{}'];
+    }
+
+    /** @return list<array<string, mixed>> požadavky na Management API */
+    public function managementCalls(string $method, string $pathPrefix): array
+    {
+        return array_values(array_filter(
+            $this->requests,
+            static fn (array $r): bool => $r['method'] === $method && str_starts_with($r['url'], self::ENDPOINT . $pathPrefix)
+        ));
     }
 
     /** @return array{status: int, body: string} */

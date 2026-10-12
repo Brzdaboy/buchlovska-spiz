@@ -46,6 +46,20 @@ final class UserRepository
         $this->pdo->prepare('UPDATE users SET last_login_at = UTC_TIMESTAMP() WHERE id = ?')->execute([$id]);
     }
 
+    public function createInvited(string $email, string $role): int
+    {
+        $this->pdo->prepare("INSERT INTO users (email, role, status) VALUES (?, ?, 'invited')")
+            ->execute([mb_strtolower(trim($email)), $role]);
+        return (int) $this->pdo->lastInsertId();
+    }
+
+    /** Admin může při novém pozvání změnit roli, dokud uživatel registraci nedokončil. */
+    public function updateInvitedRole(int $id, string $role): void
+    {
+        $this->pdo->prepare("UPDATE users SET role = ? WHERE id = ? AND status = 'invited' AND role IN ('producer', 'school')")
+            ->execute([$role, $id]);
+    }
+
     public function createAdmin(string $email): int
     {
         $this->pdo->prepare("INSERT INTO users (email, role, status) VALUES (?, 'admin', 'invited')")

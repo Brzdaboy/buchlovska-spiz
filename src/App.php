@@ -6,13 +6,16 @@ namespace App;
 
 use App\Auth\CurrentUser;
 use App\Auth\LoginService;
+use App\Auth\LogtoManagement;
 use App\Auth\OidcClient;
+use App\Controller\AdminController;
 use App\Controller\AuthController;
 use App\Controller\PortalController;
 use App\Controller\PublicController;
 use App\Repository\AuditLog;
 use App\Repository\InvitationRepository;
 use App\Repository\UserRepository;
+use App\Service\InvitationService;
 use App\Http\HttpException;
 use App\Http\Request;
 use App\Http\Response;
@@ -165,6 +168,45 @@ final class App
         return $this->oidc ??= new OidcClient($this->http, $endpoint, $appId, $secret, $cacheDir);
     }
 
+    /** Klient Logto Management API, nebo null, pokud M2M aplikace není nastavená. */
+    public function logtoManagement(): ?LogtoManagement
+    {
+        $endpoint = (string) $this->config->get('logto.endpoint', '');
+        $id = (string) $this->config->get('logto.m2m_app_id', '');
+        $secret = (string) $this->config->get('logto.m2m_app_secret', '');
+        $resource = (string) $this->config->get('logto.management_resource', '');
+        if ($this->oidc() === null || $id === '' || $secret === '' || !str_starts_with($resource, 'https://') || str_contains($resource, '<')) {
+            return null;
+        }
+        return new LogtoManagement($this->http, $endpoint, $id, $secret, $resource);
+    }
+
+    /** Služba pozvánek, nebo null, pokud chybí nastavení Logto (M2M + organizace). */
+    public function invitationService(): ?InvitationService
+    {
+        $management = $this->logtoManagement();
+        $organizationId = (string) $this->config->get('logto.members_organization_id', '');
+        if ($management === null || $organizationId === '') {
+            return null;
+        }
+        $pdo = $this->db->pdo();
+        return new InvitationService(
+            $pdo,
+            new UserRepository($pdo),
+            new InvitationRepository($pdo),
+            new AuditLog($pdo),
+            $management,
+            $organizationId,
+            fn (int $id, string $token): string => $this->absoluteUrl('/pozvanka?' . http_build_query(['id' => $id, 'token' => $token])),
+            $this->logger,
+        );
+    }
+
+    public function invitations(): InvitationRepository
+    {
+        return new InvitationRepository($this->db->pdo());
+    }
+
     /** Absolutní adresa v rámci webu (pro redirect_uri u Logto). */
     public function absoluteUrl(string $path): string
     {
@@ -191,5 +233,6 @@ final class App
         (new PublicController($this))->register($this->router);
         (new AuthController($this))->register($this->router);
         (new PortalController($this))->register($this->router);
+        (new AdminController($this))->register($this->router);
     }
 }
