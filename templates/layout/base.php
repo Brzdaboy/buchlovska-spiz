@@ -9,7 +9,7 @@ $currentPath ??= '/';
 // Jen podle session, bez dotazu do DB (veřejné stránky na databázi nesahají).
 $signedIn = isset($session) && is_int($session->get('user_id'));
 $navItems = $signedIn
-    ? ['/nabidky' => 'Nabídky', '/poptavky' => 'Poptávky', '/o-projektu' => 'O projektu', '/kontakt' => 'Kontakt']
+    ? ['/nabidky' => 'Nabídky', '/poptavky' => 'Poptávky'] // O projektu a Kontakt zůstávají v patičce
     : ['/o-projektu' => 'O projektu', '/jak-ziskat-pristup' => 'Jak získat přístup', '/kontakt' => 'Kontakt'];
 // Aktivní je i podstránka (detail nabídky zvýrazní "Nabídky", detail v administraci "Administrace").
 $current = static fn (string $path): string =>

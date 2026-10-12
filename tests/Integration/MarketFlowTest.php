@@ -94,6 +94,15 @@ final class MarketFlowTest extends DatabaseTestCase
         }
     }
 
+    public function testSignedInMenuShowsOnlyMarketAndPortal(): void
+    {
+        $body = $this->get('/nabidky')->body;
+        preg_match('#<nav class="nav nav-desktop"[^>]*>(.*?)</nav>#s', $body, $m);
+        preg_match_all('#<a [^>]*>([^<]+)</a>#', $m[1] ?? '', $links);
+        self::assertSame(['Nabídky', 'Poptávky', 'Můj portál'], array_map('trim', $links[1]));
+        self::assertStringContainsString('href="/kontakt"', $body, 'kontakt zůstává v patičce');
+    }
+
     public function testIncompleteProfileIsSentToProfileForm(): void
     {
         $incomplete = $this->createUser('school', ['status' => 'profile_incomplete']);
