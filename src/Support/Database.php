@@ -9,6 +9,12 @@ use PDO;
 /** Líné připojení k MySQL/MariaDB s bezpečnými výchozími volbami PDO. */
 final class Database
 {
+    /**
+     * Časy v UTC a striktní SQL režim nezávisle na nastavení serveru
+     * (na sdíleném hostingu může být výchozí režim benevolentní a tiše ořezávat data).
+     */
+    public const SESSION_SETUP_SQL = "SET time_zone = '+00:00', sql_mode = 'STRICT_ALL_TABLES,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'";
+
     private ?PDO $pdo = null;
 
     public function __construct(private Config $config)
@@ -30,7 +36,7 @@ final class Database
                 PDO::ATTR_EMULATE_PREPARES => false,
                 PDO::ATTR_STRINGIFY_FETCHES => false,
             ]);
-            $this->pdo->exec("SET time_zone = '+00:00', sql_mode = 'STRICT_ALL_TABLES,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO'");
+            $this->pdo->exec(self::SESSION_SETUP_SQL);
         }
         return $this->pdo;
     }

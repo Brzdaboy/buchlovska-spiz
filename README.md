@@ -31,6 +31,23 @@ php -S localhost:8080 -t public public/index.php
 
 Web poběží na <http://localhost:8080>.
 
+### Databáze
+
+Podporované: **MariaDB 10.6+** nebo **MySQL 8.0.16+** (starší verze nevynucují omezení `CHECK`).
+
+```sql
+CREATE DATABASE buchlovska_spiz CHARACTER SET utf8mb4 COLLATE utf8mb4_czech_ci;
+```
+
+Údaje doplňte do `config/config.php` a spusťte migrace:
+
+```bash
+php bin/migrate.php            # provede chybějící migrace (vč. výchozích kategorií a jednotek)
+php bin/migrate.php --status   # přehled
+```
+
+Schéma je v `migrations/`. Už provedenou migraci nikdy neupravujte; změny patří do nové (`002_…sql`).
+
 ## Testy
 
 ```bash
@@ -39,6 +56,13 @@ vendor/bin/phpunit   # nebo jen "phpunit", pokud ho máte globálně
 ```
 
 Integrační testy spouštějí vestavěný server PHP a ověřují skutečné HTTP odpovědi.
+
+Databázové testy běží jen s proměnnými prostředí a **celou testovací databázi smažou**
+(název proto musí obsahovat „test“):
+
+```bash
+BSPIZ_TEST_DB_NAME=bspiz_test BSPIZ_TEST_DB_USER=… BSPIZ_TEST_DB_PASS=… vendor/bin/phpunit
+```
 
 ## Bezpečnostní zásady
 

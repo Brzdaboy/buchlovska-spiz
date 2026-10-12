@@ -10,14 +10,32 @@ permissions:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    name: PHP ${{ matrix.php }}
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
         # WEDOS nabízí více verzí PHP 8; testujeme celý rozsah.
         php: ['8.1', '8.2', '8.3', '8.4']
+    services:
+      db:
+        image: mariadb:10.11
+        env:
+          MARIADB_DATABASE: bspiz_test
+          MARIADB_USER: bspiz
+          MARIADB_PASSWORD: bspiz
+          MARIADB_ROOT_PASSWORD: root
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+    env:
+      BSPIZ_TEST_DB_HOST: 127.0.0.1
+      BSPIZ_TEST_DB_NAME: bspiz_test
+      BSPIZ_TEST_DB_USER: bspiz
+      BSPIZ_TEST_DB_PASS: bspiz
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -33,3 +51,52 @@ jobs:
 
       - name: Testy
         run: vendor/bin/phpunit
+
+  database:
+    # Schéma musí fungovat na verzích, které může nabízet WEDOS.
+    name: DB ${{ matrix.db }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        db: ['mariadb:10.6', 'mariadb:11.4', 'mysql:8.0', 'mysql:8.4']
+    services:
+      db:
+        image: ${{ matrix.db }}
+        env:
+          MARIADB_DATABASE: bspiz_test
+          MARIADB_USER: bspiz
+          MARIADB_PASSWORD: bspiz
+          MARIADB_ROOT_PASSWORD: root
+          MYSQL_DATABASE: bspiz_test
+          MYSQL_USER: bspiz
+          MYSQL_PASSWORD: bspiz
+          MYSQL_ROOT_PASSWORD: root
+        ports: ['3306:3306']
+    env:
+      BSPIZ_TEST_DB_HOST: 127.0.0.1
+      BSPIZ_TEST_DB_NAME: bspiz_test
+      BSPIZ_TEST_DB_USER: bspiz
+      BSPIZ_TEST_DB_PASS: bspiz
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pdo_mysql
+          coverage: none
+
+      - name: Čekání na databázi
+        run: |
+          for i in $(seq 1 60); do
+            php -r 'try { new PDO("mysql:host=127.0.0.1;dbname=bspiz_test", "bspiz", "bspiz"); exit(0); } catch (Throwable $e) { exit(1); }' && exit 0
+            sleep 2
+          done
+          echo "Databáze nenaběhla" && exit 1
+
+      - name: Instalace nástrojů pro testy
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Testy schématu
+        run: vendor/bin/phpunit --filter 'SchemaTest|MigratorTest'
