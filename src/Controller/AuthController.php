@@ -116,7 +116,11 @@ final class AuthController
 
         // Uživatel v Logto přihlášení zrušil nebo nastala chyba na straně Logto.
         if ($request->query('error') !== null) {
-            $this->app->logger->info('Logto vrátilo chybu', ['error' => $request->query('error')]);
+            $this->app->logger->info('Logto vrátilo chybu', [
+                'error' => mb_substr((string) $request->query('error'), 0, 100),
+                // Popis chyby od Logto (neobsahuje tajemství) – nutný pro ladění konfigurace.
+                'description' => mb_substr((string) $request->query('error_description', ''), 0, 300),
+            ]);
             return $this->failure('Přihlášení se nedokončilo. Zkuste to prosím znovu.', 400);
         }
 
