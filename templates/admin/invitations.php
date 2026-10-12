@@ -35,12 +35,14 @@ $statusLabels = [
             <?= $input('email', 'E-mail pozvaného', ['type' => 'email', 'maxlength' => 190, 'autocomplete' => 'off', 'placeholder' => 'Např. farma@email.cz']) ?>
             <fieldset class="field">
                 <legend>Role <span class="req" aria-hidden="true">*</span></legend>
-                <?php foreach ($roles as $value => $label): ?>
-                    <label class="radio">
-                        <input type="radio" name="role" value="<?= e($value) ?>" required <?= ($old['role'] ?? '') === $value ? 'checked' : '' ?>>
-                        <?= e($label) ?>
-                    </label>
-                <?php endforeach; ?>
+                <div class="radio-row">
+                    <?php foreach ($roles as $value => $label): ?>
+                        <label class="radio">
+                            <input type="radio" name="role" value="<?= e($value) ?>" required <?= ($old['role'] ?? '') === $value ? 'checked' : '' ?>>
+                            <?= e($label) ?>
+                        </label>
+                    <?php endforeach; ?>
+                </div>
             </fieldset>
             <button class="button" type="submit">Odeslat pozvánku</button>
         </div>

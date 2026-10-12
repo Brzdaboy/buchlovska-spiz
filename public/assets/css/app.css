@@ -272,7 +272,7 @@ ul { padding-left: 1.2em; }
 .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px 24px; }
 .field label { font-weight: 700; }
 .field input[type="tel"] { min-width: min(320px, 100%); border: 1px solid #c9d2c6; border-radius: 8px; padding: 11px 12px; font-weight: 400; background: #fff; }
-.form-grid .field input { width: 100%; min-width: 0; }
+.form-grid .field input:not([type="radio"]):not([type="checkbox"]) { width: 100%; min-width: 0; }
 .field .req { color: var(--danger); }
 .field .optional, .field .hint { font-weight: 400; color: var(--muted); font-size: 13px; }
 .field .error { color: var(--danger); font-weight: 700; font-size: 13px; }
@@ -354,7 +354,7 @@ ul { padding-left: 1.2em; }
 .stack p { margin: 8px 0 0; }
 .small-print { font-size: 13px; margin: 14px 0 0; }
 .field-short { flex: 0 1 110px !important; }
-.form-inline input { width: 100%; border: 1px solid #c9d2c6; border-radius: 8px; padding: 11px 12px; min-height: 46px; background: #fff; }
+.form-inline input:not([type="radio"]):not([type="checkbox"]) { width: 100%; border: 1px solid #c9d2c6; border-radius: 8px; padding: 11px 12px; min-height: 46px; background: #fff; }
 @media (max-width: 900px) {
   .detail-grid { grid-template-columns: 1fr; }
   .contact-list { grid-template-columns: 1fr; gap: 2px; }
@@ -477,3 +477,7 @@ ul { padding-left: 1.2em; }
 .dashboard .market-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 @media (max-width: 1000px) { .dashboard .market-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .dashboard .market-grid { grid-template-columns: 1fr; } }
+
+/* Volba role v pozvánce: dvě možnosti vedle sebe, výška jako textové pole. */
+.form-inline .radio-row { min-height: 46px; align-items: center; margin-top: 9px; }
+.form-inline .radio { margin-right: 0; white-space: nowrap; }
