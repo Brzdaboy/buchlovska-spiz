@@ -13,6 +13,7 @@ use App\Controller\AdminListingController;
 use App\Controller\AdminUserController;
 use App\Controller\AuthController;
 use App\Controller\DemandController;
+use App\Controller\MarketController;
 use App\Controller\OfferController;
 use App\Controller\PortalController;
 use App\Controller\ProfileController;
@@ -252,6 +253,7 @@ final class App
         (new ProfileController($this))->register($this->router);
         (new OfferController($this))->register($this->router);
         (new DemandController($this))->register($this->router);
+        (new MarketController($this))->register($this->router);
         (new AdminController($this))->register($this->router);
         (new AdminListingController($this))->register($this->router);
         (new AdminUserController($this))->register($this->router);

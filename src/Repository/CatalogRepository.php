@@ -19,6 +19,13 @@ final class CatalogRepository
         return $this->pairs('SELECT id, name FROM categories WHERE is_active = 1 ORDER BY sort_order, name');
     }
 
+    /** @return list<array{id: int, name: string, slug: string}> aktivní kategorie pro filtr tržiště */
+    public function activeCategoryOptions(): array
+    {
+        $rows = $this->pdo->query('SELECT id, name, slug FROM categories WHERE is_active = 1 ORDER BY sort_order, name')->fetchAll(PDO::FETCH_ASSOC);
+        return array_map(static fn (array $r): array => ['id' => (int) $r['id'], 'name' => (string) $r['name'], 'slug' => (string) $r['slug']], $rows);
+    }
+
     /** @return array<int, string> id => kód jednotky (jen aktivní) */
     public function activeUnits(): array
     {

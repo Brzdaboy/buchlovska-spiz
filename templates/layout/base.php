@@ -6,14 +6,14 @@
 /** @var \App\Security\Session $session */
 $flashes = isset($session) ? $session->pullFlashes() : [];
 $currentPath ??= '/';
-$navItems = [
-    '/o-projektu' => 'O projektu',
-    '/jak-ziskat-pristup' => 'Jak získat přístup',
-    '/kontakt' => 'Kontakt',
-];
 // Jen podle session, bez dotazu do DB (veřejné stránky na databázi nesahají).
 $signedIn = isset($session) && is_int($session->get('user_id'));
-$current = static fn (string $path): string => $path === $currentPath ? ' aria-current="page"' : '';
+$navItems = $signedIn
+    ? ['/nabidky' => 'Nabídky', '/poptavky' => 'Poptávky', '/o-projektu' => 'O projektu', '/kontakt' => 'Kontakt']
+    : ['/o-projektu' => 'O projektu', '/jak-ziskat-pristup' => 'Jak získat přístup', '/kontakt' => 'Kontakt'];
+// Aktivní je i podstránka (detail nabídky zvýrazní "Nabídky", detail v administraci "Administrace").
+$current = static fn (string $path): string =>
+    $path === $currentPath || ($path !== '/' && str_starts_with($currentPath, $path . '/')) ? ' aria-current="page"' : '';
 ?><!doctype html>
 <html lang="cs">
 <head>

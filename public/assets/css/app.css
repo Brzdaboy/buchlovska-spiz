@@ -60,7 +60,7 @@ ul { padding-left: 1.2em; }
 .nav-mobile { display: none; }
 .nav { display: flex; align-items: center; gap: 28px; font-size: 14px; font-weight: 700; }
 .nav a { text-decoration: none; }
-.nav a:not(.button):hover, .nav a[aria-current="page"] { color: var(--green-2); }
+.nav a:not(.button):hover, .nav a[aria-current="page"]:not(.button) { color: var(--green-2); }
 .nav a[aria-current="page"]:not(.button) { text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 2px; }
 
 /* ---------- Hero ---------- */
@@ -351,3 +351,80 @@ ul { padding-left: 1.2em; }
 /* Administrace – drobnosti v detailech */
 .admin-content .card h2, .admin-content .card h3 { margin-top: 0; font-size: 22px; }
 .admin-content .card > .listing-meta { margin-bottom: 16px; }
+
+/* ---------- Tržiště ---------- */
+.market-filter { margin-top: 0; }
+.market-filter-grid { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1.4fr); gap: 16px 18px; align-items: start; }
+.market-filter-grid.with-price { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 1.6fr) minmax(0, 1.3fr); }
+.market-filter .field > label, .market-filter .filter-label { font-weight: 700; font-size: 14px; line-height: 1.6; }
+.market-filter .field input, .market-filter .field select { width: 100%; min-width: 0; height: 48px; min-height: 48px; }
+.period-inputs, .price-inputs { display: flex; align-items: center; gap: 8px; }
+.period-inputs input { flex: 1 1 0; min-width: 0; }
+.price-inputs input { flex: 1 1 70px; min-width: 0; }
+.price-inputs select { flex: 0 0 104px; width: 104px !important; }
+.period-inputs span, .price-inputs span { color: var(--muted); font-weight: 400; white-space: nowrap; }
+.market-filter-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.market-count { color: var(--muted); margin: 8px 0 16px; }
+.market-count strong { color: var(--ink); }
+
+.market-grid { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+.market-card { position: relative; display: flex; flex-direction: column; background: #fff; border: 1px solid var(--line); border-radius: var(--radius-card); overflow: hidden; transition: border-color .15s, box-shadow .15s, transform .15s; }
+.market-card:hover { border-color: var(--green-2); box-shadow: 0 10px 28px #173c2a14; transform: translateY(-2px); }
+.market-card:focus-within { outline: 3px solid var(--lime); outline-offset: 2px; }
+.market-card-photo { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; background: var(--sand); }
+.market-card-body { display: flex; flex-direction: column; gap: 4px; padding: 16px 18px 18px; flex: 1; }
+.market-card-category { margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--green-2); }
+.market-card h3 { margin: 2px 0 4px; font-size: 21px; }
+.market-card h3 a { color: inherit; text-decoration: none; }
+.market-card h3 a::after { content: ""; position: absolute; inset: 0; } /* celá karta je odkaz */
+.market-card h3 a:focus { outline: none; }
+.market-card-price { margin: 0; font-weight: 700; font-size: 18px; color: var(--green); }
+.market-card-facts { margin: 0; font-size: 14px; color: var(--muted); }
+.market-card-owner { margin: auto 0 0; padding-top: 10px; font-size: 14px; border-top: 1px solid var(--line); margin-top: 12px; }
+
+.pagination { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; margin: 32px 0 8px; }
+.pagination ol { list-style: none; display: flex; gap: 6px; padding: 0; margin: 0; }
+.pagination li a { display: inline-grid; place-items: center; min-width: 40px; height: 40px; padding: 0 8px; border-radius: 999px; border: 1px solid var(--line); text-decoration: none; color: var(--ink); font-weight: 700; background: #fff; }
+.pagination li a[aria-current="page"] { background: var(--green); border-color: var(--green); color: #fff; }
+.pagination .gap { align-self: center; color: var(--muted); }
+
+.market-detail-main { padding: 0; overflow: hidden; }
+.market-detail-main > :not(img) { margin-left: 28px; margin-right: 28px; }
+.market-detail-main > dl { margin-bottom: 26px; }
+.market-detail-photo { display: block; width: 100%; height: auto; aspect-ratio: 16 / 7; object-fit: cover; }
+.market-detail-price { font: 700 28px var(--serif); color: var(--green); margin-top: 22px; margin-bottom: 16px; }
+.market-contact { background: var(--cream); border-color: transparent; }
+.market-contact .eyebrow { margin: 0 0 4px; }
+.market-contact .contact-list { grid-template-columns: 1fr; gap: 2px; }
+.market-contact .contact-list dd { margin-bottom: 10px; overflow-wrap: anywhere; }
+.market-contact a { color: var(--green); font-weight: 700; }
+
+.own-summary { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px 32px; margin-top: 0; }
+.summary-list { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 8px 22px; }
+.summary-list .badge { min-width: 28px; text-align: center; margin-right: 4px; }
+.own-summary-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.dashboard-section { margin: 36px 0; }
+.section-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px 20px; margin-bottom: 14px; }
+.section-head h2 { margin: 0; }
+.section-head a { color: var(--green); font-weight: 700; }
+.dashboard .admin-links { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+
+@media (max-width: 1000px) {
+  .market-filter-grid, .market-filter-grid.with-price { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .market-filter-grid, .market-filter-grid.with-price { grid-template-columns: 1fr; }
+  .market-detail-main > :not(img) { margin-left: 20px; margin-right: 20px; }
+  .market-detail-photo { aspect-ratio: 16 / 9; }
+}
+.dashboard .contact-list + p { margin-top: 18px; }
+@media (max-width: 560px) {
+  .market-grid { gap: 12px; }
+  .market-card { flex-direction: row; }
+  .market-card-photo { width: 96px; flex: 0 0 96px; aspect-ratio: auto; height: auto; min-height: 100%; }
+  .market-card-body { padding: 12px 14px; gap: 2px; }
+  .market-card h3 { font-size: 18px; margin: 0 0 2px; }
+  .market-card-price { font-size: 16px; }
+  .market-card-facts, .market-card-owner { font-size: 13px; }
+  .market-card-owner { margin-top: 8px; padding-top: 6px; }
+}
