@@ -33,8 +33,6 @@ final class PublicController
         $router->get('/kontakt', $this->contact(...));
         $router->get('/ochrana-osobnich-udaju', fn (): Response => $this->legal('Ochrana osobních údajů'));
         $router->get('/podminky-pouzivani', fn (): Response => $this->legal('Podmínky používání'));
-        // Dočasně, do kroku 4 (Logto):
-        $router->get('/prihlaseni', fn (): Response => $this->page('public/login-placeholder', 'Přihlášení'));
     }
 
     public function home(): Response

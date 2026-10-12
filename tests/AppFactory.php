@@ -7,6 +7,7 @@ namespace Tests;
 use App\App;
 use App\Security\Session;
 use App\Support\Config;
+use App\Support\HttpClient;
 use App\Support\Logger;
 
 /** Sestaví aplikaci pro testy: session v poli, logy do dočasné složky. */
@@ -25,7 +26,7 @@ final class AppFactory
     }
 
     /** @param array<string, mixed> $overrides */
-    public static function create(array $overrides = []): App
+    public static function create(array $overrides = [], ?HttpClient $http = null): App
     {
         self::$sessionData = [];
         $data = &self::$sessionData;
@@ -36,6 +37,7 @@ final class AppFactory
                 return new Session($data);
             },
             dirname(__DIR__),
+            $http,
         );
     }
 }

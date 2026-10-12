@@ -18,6 +18,23 @@ final class HttpException extends RuntimeException
         parent::__construct($publicMessage, $status);
     }
 
+    /** Přesměrování v rámci webu (např. nepřihlášený uživatel na /prihlaseni). */
+    public static function redirect(string $path): self
+    {
+        Response::redirect($path); // ověří, že jde o cestu v rámci webu
+        return new self(303, '', ['Location' => $path]);
+    }
+
+    public function isRedirect(): bool
+    {
+        return $this->status >= 300 && $this->status < 400;
+    }
+
+    public static function badRequest(string $message): self
+    {
+        return new self(400, $message);
+    }
+
     public static function notFound(): self
     {
         return new self(404, 'Odkaz je možná neplatný, nebo stránka už neexistuje.');

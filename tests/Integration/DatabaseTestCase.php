@@ -18,6 +18,9 @@ abstract class DatabaseTestCase extends TestCase
 {
     protected static ?PDO $pdo = null;
 
+    /** false = test pracuje přes aplikaci s vlastním připojením; tabulky se místo rollbacku vyprázdní. */
+    protected bool $useTransaction = true;
+
     public static function setUpBeforeClass(): void
     {
         $name = getenv('BSPIZ_TEST_DB_NAME');
@@ -58,7 +61,11 @@ abstract class DatabaseTestCase extends TestCase
         if (self::$pdo === null) {
             self::markTestSkipped('Databázové testy vyžadují BSPIZ_TEST_DB_NAME (a další BSPIZ_TEST_DB_*).');
         }
-        self::$pdo->beginTransaction();
+        if ($this->useTransaction) {
+            self::$pdo->beginTransaction();
+        } else {
+            self::truncateData(self::$pdo);
+        }
     }
 
     protected function tearDown(): void
@@ -66,6 +73,28 @@ abstract class DatabaseTestCase extends TestCase
         if (self::$pdo !== null && self::$pdo->inTransaction()) {
             self::$pdo->rollBack();
         }
+    }
+
+    /** Smaže data (ne číselníky) mezi testy, které nepoužívají transakci. */
+    public static function truncateData(PDO $pdo): void
+    {
+        $pdo->exec('SET FOREIGN_KEY_CHECKS = 0');
+        foreach (['audit_log', 'offers', 'demands', 'invitations', 'producer_profiles', 'school_profiles', 'users'] as $table) {
+            $pdo->exec("DELETE FROM {$table}");
+        }
+        $pdo->exec('SET FOREIGN_KEY_CHECKS = 1');
+    }
+
+    /** @return array<string, string|int> konfigurace DB pro aplikaci v testu */
+    public static function dbConfig(): array
+    {
+        return [
+            'host' => getenv('BSPIZ_TEST_DB_HOST') ?: '127.0.0.1',
+            'port' => (int) (getenv('BSPIZ_TEST_DB_PORT') ?: 3306),
+            'name' => (string) getenv('BSPIZ_TEST_DB_NAME'),
+            'user' => (string) getenv('BSPIZ_TEST_DB_USER'),
+            'pass' => (string) getenv('BSPIZ_TEST_DB_PASS'),
+        ];
     }
 
     protected function db(): PDO

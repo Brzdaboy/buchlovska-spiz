@@ -4,7 +4,15 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Auth\CurrentUser;
+use App\Auth\LoginService;
+use App\Auth\OidcClient;
+use App\Controller\AuthController;
+use App\Controller\PortalController;
 use App\Controller\PublicController;
+use App\Repository\AuditLog;
+use App\Repository\InvitationRepository;
+use App\Repository\UserRepository;
 use App\Http\HttpException;
 use App\Http\Request;
 use App\Http\Response;
@@ -13,6 +21,8 @@ use App\Security\Csrf;
 use App\Security\SecurityHeaders;
 use App\Security\Session;
 use App\Support\Config;
+use App\Support\CurlHttpClient;
+use App\Support\HttpClient;
 use App\Support\Database;
 use App\Support\ErrorHandler;
 use App\Support\Logger;
@@ -29,16 +39,21 @@ final class App
     public readonly Router $router;
     public readonly View $view;
     public readonly Database $db;
+    public readonly HttpClient $http;
     private ?Session $session = null;
     private ?Csrf $csrf = null;
+    private ?CurrentUser $currentUser = null;
+    private ?OidcClient $oidc = null;
 
     /** @param Closure(): Session $sessionFactory */
     public function __construct(
         public readonly Config $config,
         public readonly Logger $logger,
         private Closure $sessionFactory,
-        string $projectRoot,
+        private string $projectRoot,
+        ?HttpClient $http = null,
     ) {
+        $this->http = $http ?? new CurlHttpClient();
         $this->router = new Router();
         $this->view = new View($projectRoot . '/templates', ['config' => $config]);
         $this->db = new Database($config);
@@ -68,6 +83,7 @@ final class App
         try {
             $this->session = ($this->sessionFactory)();
             $this->csrf = new Csrf($this->session);
+            $this->currentUser = null;
             $this->view->share('csrf', $this->csrf);
             $this->view->share('session', $this->session);
             $this->view->share('currentPath', $request->path);
@@ -83,7 +99,9 @@ final class App
             }
             $response = $this->router->dispatch($request);
         } catch (HttpException $e) {
-            $response = $this->errorResponse($e->status, $e->getMessage());
+            $response = $e->isRedirect()
+                ? new Response('', $e->status)
+                : $this->errorResponse($e->status, $e->getMessage());
             foreach ($e->headers as $name => $value) {
                 $response = $response->withHeader($name, $value);
             }
@@ -117,6 +135,42 @@ final class App
         return $this->csrf ?? throw new \LogicException('Session ještě neběží.');
     }
 
+    /** Přihlášený uživatel aktuálního požadavku (databáze se načte až při prvním použití). */
+    public function auth(): CurrentUser
+    {
+        return $this->currentUser ??= new CurrentUser($this->session(), $this->users());
+    }
+
+    public function users(): UserRepository
+    {
+        return new UserRepository($this->db->pdo());
+    }
+
+    public function loginService(): LoginService
+    {
+        $pdo = $this->db->pdo();
+        return new LoginService($pdo, new UserRepository($pdo), new InvitationRepository($pdo), new AuditLog($pdo));
+    }
+
+    /** OIDC klient, nebo null, pokud Logto ještě není v konfiguraci vyplněné. */
+    public function oidc(): ?OidcClient
+    {
+        $endpoint = (string) $this->config->get('logto.endpoint', '');
+        $appId = (string) $this->config->get('logto.app_id', '');
+        $secret = (string) $this->config->get('logto.app_secret', '');
+        if (!str_starts_with($endpoint, 'https://') || str_contains($endpoint, '<') || $appId === '' || $secret === '') {
+            return null;
+        }
+        $cacheDir = rtrim((string) $this->config->get('app.var_dir', $this->projectRoot . '/var'), '/') . '/cache';
+        return $this->oidc ??= new OidcClient($this->http, $endpoint, $appId, $secret, $cacheDir);
+    }
+
+    /** Absolutní adresa v rámci webu (pro redirect_uri u Logto). */
+    public function absoluteUrl(string $path): string
+    {
+        return rtrim((string) $this->config->get('app.url'), '/') . $path;
+    }
+
     private function errorResponse(int $status, string $message, ?string $debugDetail = null): Response
     {
         try {
@@ -135,5 +189,7 @@ final class App
     private function registerRoutes(): void
     {
         (new PublicController($this))->register($this->router);
+        (new AuthController($this))->register($this->router);
+        (new PortalController($this))->register($this->router);
     }
 }

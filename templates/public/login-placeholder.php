@@ -1,4 +1,4 @@
-<?php /* Dočasné: přihlášení přes Logto přibude v kroku 4. */ ?>
+<?php /* Zobrazí se, jen dokud v config.php chybí údaje Logto. */ ?>
 <section class="page-hero">
     <div class="page-hero-inner">
         <p class="eyebrow">Přihlášení</p>

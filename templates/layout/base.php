@@ -11,6 +11,8 @@ $navItems = [
     '/jak-ziskat-pristup' => 'Jak získat přístup',
     '/kontakt' => 'Kontakt',
 ];
+// Jen podle session, bez dotazu do DB (veřejné stránky na databázi nesahají).
+$signedIn = isset($session) && is_int($session->get('user_id'));
 $current = static fn (string $path): string => $path === $currentPath ? ' aria-current="page"' : '';
 ?><!doctype html>
 <html lang="cs">
@@ -34,7 +36,11 @@ $current = static fn (string $path): string => $path === $currentPath ? ' aria-c
         <?php foreach ($navItems as $path => $label): ?>
             <a href="<?= e($path) ?>"<?= $current($path) ?>><?= e($label) ?></a>
         <?php endforeach; ?>
-        <a class="button small" href="/prihlaseni"<?= $current('/prihlaseni') ?>>Přihlásit se</a>
+        <?php if ($signedIn): ?>
+            <a class="button small" href="/portal"<?= $current('/portal') ?>>Můj portál</a>
+        <?php else: ?>
+            <a class="button small" href="/prihlaseni"<?= $current('/prihlaseni') ?>>Přihlásit se</a>
+        <?php endif; ?>
     <?php $navLinks = (string) ob_get_clean(); ?>
     <?php /* Dvě varianty bez JavaScriptu; v každé šířce je vidět (a čtečkám dostupná) jen jedna. */ ?>
     <nav class="nav nav-desktop" aria-label="Hlavní navigace"><?= $navLinks ?></nav>

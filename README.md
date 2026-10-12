@@ -22,6 +22,8 @@ Aplikace na serveru **nepotřebuje Composer** ani žádné knihovny třetích st
 
 ## Lokální vývoj
 
+Podrobný návod včetně přihlášení přes Logto: **[docs/LOKALNI-SPUSTENI.md](docs/LOKALNI-SPUSTENI.md)**.
+
 Požadavky: PHP 8.1+ s rozšířeními `pdo_mysql`, `mbstring`, `openssl`, `curl`.
 
 ```bash
@@ -71,3 +73,6 @@ BSPIZ_TEST_DB_NAME=bspiz_test BSPIZ_TEST_DB_USER=… BSPIZ_TEST_DB_PASS=… vend
 - Výstupy se escapují funkcí `e()`; SQL dotazy jen s parametry (PDO, bez emulace).
 - Uživatel nikdy neuvidí detail chyby; detail jde do `var/log/`.
 - Oprávnění a vlastnictví záznamů se kontroluje na serveru.
+- Přihlášení: Logto (OIDC, PKCE), vlastní klient bez knihoven (`src/Auth/`, ADR 001).
+  Přístup rozhoduje databáze aplikace, ne Logto: nový člověk se dostane dovnitř jen
+  přes platnou pozvánku na ověřený e-mail; stav účtu se kontroluje při každém požadavku.
