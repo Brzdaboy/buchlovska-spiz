@@ -22,10 +22,14 @@ final class PortalController
 
     public function dashboard(): Response
     {
-        $user = $this->app->auth()->require();
+        $user = $this->app->auth()->requireActive();
+        $profile = in_array($user['role'], ['producer', 'school'], true)
+            ? $this->app->profiles()->find((int) $user['id'], (string) $user['role'])
+            : null;
         return Response::html($this->app->view->render('portal/dashboard', [
             'title' => 'Můj portál',
             'user' => $user,
+            'profile' => $profile,
         ]));
     }
 }

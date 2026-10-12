@@ -252,3 +252,19 @@ ul { padding-left: 1.2em; }
   .data-table td[data-label]::before { content: attr(data-label) ": "; font-weight: 700; color: var(--muted); }
   .data-table .actions { text-align: left; padding-top: 8px; }
 }
+
+/* ---------- Formuláře profilu ---------- */
+.profile-form fieldset { border: 0; padding: 0; margin: 0 0 28px; }
+.profile-form legend { font: 700 20px var(--serif); margin-bottom: 14px; padding: 0; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px 24px; }
+.field label { font-weight: 700; }
+.field input[type="tel"] { min-width: min(320px, 100%); border: 1px solid #c9d2c6; border-radius: 8px; padding: 11px 12px; font-weight: 400; background: #fff; }
+.form-grid .field input { width: 100%; min-width: 0; }
+.field .req { color: var(--danger); }
+.field .optional, .field .hint { font-weight: 400; color: var(--muted); font-size: 13px; }
+.field .error { color: var(--danger); font-weight: 700; font-size: 13px; }
+.field.has-error input:not([type="checkbox"]) { border-color: var(--danger); box-shadow: 0 0 0 1px var(--danger); }
+.checkbox { display: flex; gap: 10px; align-items: flex-start; font-weight: 400 !important; line-height: 1.5; }
+.checkbox input { width: 20px; height: 20px; margin-top: 2px; flex: none; accent-color: var(--green); }
+.form-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.form-summary { margin: 0 0 18px; }

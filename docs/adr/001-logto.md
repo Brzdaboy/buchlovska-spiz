@@ -77,6 +77,8 @@ Kód se pokryje jednotkovými testy s vlastními testovacími klíči. SDK zůst
 ## Ověřeno ručně 12. 10. 2026 (localhost + tenant vnac13)
 
 - Přihlášení admina přes Authorization Code + PKCE, ID token ES384, propojení účtu z `bin/create-admin.php`: **funguje**.
+- Pozvánka: one-time token (7 dní) + organizační pozvánka, e-mail odeslala vestavěná e-mailová služba Logto,
+  registrace přes odkaz při vypnuté veřejné registraci a propojení s lokálním účtem: **funguje**.
 - Aplikace v Logto musí být běžná *Traditional web* (např. šablona PHP), **ne Third-party app**;
   ta odmítá scope `email`/`profile` chybou `invalid_scope` a uživatelům by ukazovala souhlas s předáním údajů.
 

@@ -109,10 +109,13 @@ final class AuthFlowTest extends DatabaseTestCase
         self::assertSame('accepted', $this->db()->query("SELECT status FROM invitations WHERE user_id = {$userId}")->fetchColumn());
         self::assertSame(1, (int) $this->db()->query("SELECT COUNT(*) FROM audit_log WHERE action = 'user.identity_linked' AND target_id = {$userId}")->fetchColumn());
 
+        // Neúplný profil: portál pošle nejdřív na formulář profilu.
         $portal = $this->get('/portal');
-        self::assertSame(200, $portal->status);
-        self::assertStringContainsString('farma@example.cz', $portal->body);
-        self::assertStringContainsString('dokončit profil', $portal->body);
+        self::assertSame('/profil', $portal->headers['Location']);
+        $profile = $this->get('/profil');
+        self::assertSame(200, $profile->status);
+        self::assertStringContainsString('Dokončení profilu', $profile->body);
+        self::assertStringContainsString('farma@example.cz', $profile->body);
     }
 
     public function testReturningUserIsFoundByLogtoIdEvenWithChangedEmail(): void

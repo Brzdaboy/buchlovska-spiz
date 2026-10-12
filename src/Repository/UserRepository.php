@@ -60,6 +60,16 @@ final class UserRepository
             ->execute([$role, $id]);
     }
 
+    /** Po prvním vyplnění profilu: profile_incomplete -> active. */
+    public function activateAfterProfile(int $id): bool
+    {
+        $stmt = $this->pdo->prepare(
+            "UPDATE users SET status = 'active', profile_completed_at = UTC_TIMESTAMP() WHERE id = ? AND status = 'profile_incomplete'"
+        );
+        $stmt->execute([$id]);
+        return $stmt->rowCount() === 1;
+    }
+
     public function createAdmin(string $email): int
     {
         $this->pdo->prepare("INSERT INTO users (email, role, status) VALUES (?, 'admin', 'invited')")

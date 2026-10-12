@@ -52,6 +52,21 @@ final class CurrentUser
     }
 
     /**
+     * Vyžaduje aktivní účet. Kdo ještě nedokončil profil, jde nejdřív na /profil
+     * (tržiště a kontakty jsou jen pro členy s vyplněnými kontakty).
+     *
+     * @return array<string, mixed>
+     */
+    public function requireActive(): array
+    {
+        $user = $this->require();
+        if ($user['status'] === 'profile_incomplete') {
+            throw HttpException::redirect('/profil');
+        }
+        return $user;
+    }
+
+    /**
      * Vyžaduje přihlášení s jednou z rolí. Neúplný profil pustí jen tam, kde je to výslovně povoleno.
      *
      * @return array<string, mixed>

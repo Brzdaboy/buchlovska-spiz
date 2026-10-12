@@ -11,9 +11,11 @@ use App\Auth\OidcClient;
 use App\Controller\AdminController;
 use App\Controller\AuthController;
 use App\Controller\PortalController;
+use App\Controller\ProfileController;
 use App\Controller\PublicController;
 use App\Repository\AuditLog;
 use App\Repository\InvitationRepository;
+use App\Repository\ProfileRepository;
 use App\Repository\UserRepository;
 use App\Service\InvitationService;
 use App\Http\HttpException;
@@ -202,6 +204,16 @@ final class App
         );
     }
 
+    public function profiles(): ProfileRepository
+    {
+        return new ProfileRepository($this->db->pdo());
+    }
+
+    public function audit(): AuditLog
+    {
+        return new AuditLog($this->db->pdo());
+    }
+
     public function invitations(): InvitationRepository
     {
         return new InvitationRepository($this->db->pdo());
@@ -233,6 +245,7 @@ final class App
         (new PublicController($this))->register($this->router);
         (new AuthController($this))->register($this->router);
         (new PortalController($this))->register($this->router);
+        (new ProfileController($this))->register($this->router);
         (new AdminController($this))->register($this->router);
     }
 }
