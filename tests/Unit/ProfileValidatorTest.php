@@ -6,36 +6,19 @@ namespace Tests\Unit;
 
 use App\Service\ProfileValidator;
 use PHPUnit\Framework\TestCase;
+use Tests\Support\Fixtures;
 
 final class ProfileValidatorTest extends TestCase
 {
-    /** @return array<string, string> */
-    public static function validProducer(array $overrides = []): array
-    {
-        return $overrides + [
-            'producer_name' => 'Farma Pod Barborkou',
-            'contact_name' => 'Jan Novák',
-            'address_line' => 'Náves 12',
-            'municipality' => 'Buchlovice',
-            'postal_code' => '687 08',
-            'phone' => '+420 600 123 456',
-            'public_email' => 'Farma@Example.cz',
-            'website' => '',
-            'company_id' => '',
-            'privacy_consent' => '1',
-            'contact_publication_consent' => '1',
-        ];
-    }
-
     public function testValidProducerIsNormalized(): void
     {
-        $result = ProfileValidator::validate('producer', self::validProducer(['website' => 'www.farma.cz', 'company_id' => '00006947']), true);
+        $result = ProfileValidator::validate('producer', Fixtures::producerProfile(['website' => 'www.farma.cz', 'company_id' => '00006947']), true);
         self::assertSame([], $result['errors']);
         self::assertSame('68708', $result['data']['postal_code']);
         self::assertSame('farma@example.cz', $result['data']['public_email']);
         self::assertSame('https://www.farma.cz', $result['data']['website']);
         self::assertSame('00006947', $result['data']['company_id']);
-        self::assertNull(ProfileValidator::validate('producer', self::validProducer(), true)['data']['website']);
+        self::assertNull(ProfileValidator::validate('producer', Fixtures::producerProfile(), true)['data']['website']);
     }
 
     /** @return iterable<string, array{array<string, string>, string}> */
@@ -60,13 +43,13 @@ final class ProfileValidatorTest extends TestCase
     /** @dataProvider invalidInputs */
     public function testInvalidInputProducesFieldError(array $overrides, string $field): void
     {
-        $errors = ProfileValidator::validate('producer', self::validProducer($overrides), true)['errors'];
+        $errors = ProfileValidator::validate('producer', Fixtures::producerProfile($overrides), true)['errors'];
         self::assertArrayHasKey($field, $errors);
     }
 
     public function testConsentsAreNotRequiredWhenEditing(): void
     {
-        $input = self::validProducer(['privacy_consent' => '', 'contact_publication_consent' => '']);
+        $input = Fixtures::producerProfile(['privacy_consent' => '', 'contact_publication_consent' => '']);
         self::assertSame([], ProfileValidator::validate('producer', $input, false)['errors']);
     }
 

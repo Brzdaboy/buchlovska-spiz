@@ -50,7 +50,9 @@ jobs:
         run: composer install --no-interaction --no-progress --prefer-dist
 
       - name: Testy
-        run: vendor/bin/phpunit
+        run: |
+          set -o pipefail
+          vendor/bin/phpunit 2>&1 | tee phpunit.out || { echo "::error title=PHPUnit::$(tail -c 1500 phpunit.out | tr '\n' ' ')"; exit 1; }
 
   database:
     # Schéma musí fungovat na verzích, které může nabízet WEDOS.
@@ -99,4 +101,6 @@ jobs:
         run: composer install --no-interaction --no-progress --prefer-dist
 
       - name: Testy schématu
-        run: vendor/bin/phpunit --filter 'SchemaTest|MigratorTest'
+        run: |
+          set -o pipefail
+          vendor/bin/phpunit --filter 'SchemaTest|MigratorTest' 2>&1 | tee phpunit.out || { echo "::error title=PHPUnit::$(tail -c 1500 phpunit.out | tr '\n' ' ')"; exit 1; }

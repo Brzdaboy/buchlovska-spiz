@@ -8,7 +8,7 @@ use App\App;
 use App\Http\Request;
 use App\Http\Response;
 use Tests\AppFactory;
-use Tests\Unit\ProfileValidatorTest;
+use Tests\Support\Fixtures;
 
 /** Dokončení a úprava profilu přes skutečné HTTP požadavky aplikace a MariaDB. */
 final class ProfileFlowTest extends DatabaseTestCase
@@ -61,7 +61,7 @@ final class ProfileFlowTest extends DatabaseTestCase
     {
         $id = $this->newMember();
 
-        $response = $this->post('/profil', ProfileValidatorTest::validProducer(['website' => 'farma.cz']));
+        $response = $this->post('/profil', Fixtures::producerProfile(['website' => 'farma.cz']));
 
         self::assertSame('/portal', $response->headers['Location']);
         self::assertSame('active', $this->status($id));
@@ -97,7 +97,7 @@ final class ProfileFlowTest extends DatabaseTestCase
     public function testInvalidFormIsRedisplayedWithErrorsAndNothingSaved(): void
     {
         $id = $this->newMember();
-        $response = $this->post('/profil', ProfileValidatorTest::validProducer([
+        $response = $this->post('/profil', Fixtures::producerProfile([
             'postal_code' => 'abc', 'producer_name' => '<script>alert(1)</script>', 'privacy_consent' => '',
         ]));
 
@@ -113,14 +113,14 @@ final class ProfileFlowTest extends DatabaseTestCase
     public function testEditingKeepsConsentsAndPublishesImmediately(): void
     {
         $id = $this->newMember();
-        $this->post('/profil', ProfileValidatorTest::validProducer());
+        $this->post('/profil', Fixtures::producerProfile());
         $consent = $this->db()->query("SELECT privacy_consent_at FROM producer_profiles WHERE user_id = {$id}")->fetchColumn();
 
         $form = $this->get('/profil')->body;
         self::assertStringContainsString('Můj profil', $form);
         self::assertStringNotContainsString('name="privacy_consent"', $form, 'souhlasy se při úpravě znovu nevyžadují');
 
-        $this->post('/profil', ProfileValidatorTest::validProducer(['phone' => '777 111 222', 'privacy_consent' => '', 'contact_publication_consent' => '']));
+        $this->post('/profil', Fixtures::producerProfile(['phone' => '777 111 222', 'privacy_consent' => '', 'contact_publication_consent' => '']));
 
         $row = $this->db()->query("SELECT phone, privacy_consent_at FROM producer_profiles WHERE user_id = {$id}")->fetch();
         self::assertSame('777 111 222', $row['phone']);
@@ -132,10 +132,10 @@ final class ProfileFlowTest extends DatabaseTestCase
     public function testDuplicateCompanyIdShowsFriendlyError(): void
     {
         $other = $this->newMember();
-        $this->post('/profil', ProfileValidatorTest::validProducer(['company_id' => '00006947']));
+        $this->post('/profil', Fixtures::producerProfile(['company_id' => '00006947']));
 
         $id = $this->newMember();
-        $response = $this->post('/profil', ProfileValidatorTest::validProducer(['company_id' => '00006947']));
+        $response = $this->post('/profil', Fixtures::producerProfile(['company_id' => '00006947']));
 
         self::assertSame(422, $response->status);
         self::assertStringContainsString('už v Buchlovské spíži má účet', $response->body);
@@ -153,13 +153,13 @@ final class ProfileFlowTest extends DatabaseTestCase
     {
         self::assertSame('/prihlaseni', $this->get('/profil')->headers['Location']);
         $this->newMember();
-        self::assertSame(419, $this->app->handle(new Request('POST', '/profil', [], ProfileValidatorTest::validProducer()))->status);
+        self::assertSame(419, $this->app->handle(new Request('POST', '/profil', [], Fixtures::producerProfile()))->status);
     }
 
     public function testRoleCannotBeChangedViaForm(): void
     {
         $id = $this->newMember('producer');
-        $this->post('/profil', ProfileValidatorTest::validProducer(['role' => 'admin', 'status' => 'active', 'school_name' => 'X']));
+        $this->post('/profil', Fixtures::producerProfile(['role' => 'admin', 'status' => 'active', 'school_name' => 'X']));
         $user = $this->db()->query("SELECT role FROM users WHERE id = {$id}")->fetch();
         self::assertSame('producer', $user['role']);
         self::assertSame(0, (int) $this->db()->query('SELECT COUNT(*) FROM school_profiles')->fetchColumn());
