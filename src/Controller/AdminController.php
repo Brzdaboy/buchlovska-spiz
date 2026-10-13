@@ -44,6 +44,7 @@ final class AdminController
             'counts' => (new \App\Repository\AdminListingRepository($pdo))->counts($seen),
             'users' => (new \App\Repository\AdminUserRepository($pdo))->activeCounts(),
             'pendingInvitations' => $pendingInvitations,
+            'maintenance' => \App\Service\Maintenance::lastRun($this->app->maintenanceStateFile()),
         ]);
     }
 

@@ -143,13 +143,13 @@ final class DemandFlowTest extends DatabaseTestCase
         self::assertSame('active', $this->demand($id)['status']);
     }
 
-    public function testDeleteRequiresConfirmationAndIsSoft(): void
+    public function testDeleteRequiresConfirmationAndIsPermanent(): void
     {
         $id = $this->createDemand();
         $this->post("/moje-poptavky/{$id}/smazat");
-        self::assertNull($this->demand($id)['deleted_at']);
+        self::assertNotSame([], $this->demand($id));
         $this->post("/moje-poptavky/{$id}/smazat", ['confirm' => '1']);
-        self::assertNotNull($this->demand($id)['deleted_at']);
+        self::assertSame([], $this->demand($id));
         self::assertSame(404, $this->get("/moje-poptavky/{$id}/upravit")->status);
     }
 }

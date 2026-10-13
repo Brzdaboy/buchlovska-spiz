@@ -205,10 +205,7 @@ final class OfferController
         if ($request->input('confirm') !== '1') {
             return Response::redirect('/moje-nabidky/' . (int) $offer['id'] . '/smazat');
         }
-        $this->offers()->softDelete((int) $offer['id'], (int) $user['id']);
-        $this->app->audit()->record((int) $user['id'], 'offer.deleted', 'offer', (int) $offer['id'], [
-            'product_name' => (string) $offer['product_name'],
-        ]);
+        $this->offers()->delete((int) $offer['id'], (int) $user['id']);
         $this->app->session()->flash('success', 'Nabídka „' . $offer['product_name'] . '“ je smazaná.');
         return Response::redirect('/portal');
     }

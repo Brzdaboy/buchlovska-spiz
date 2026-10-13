@@ -2,6 +2,9 @@
 /** @var array{new: int, resubmitted: int} $counts */
 /** @var array<string, int> $users */
 /** @var int $pendingInvitations */
+/** @var array{last_run: string, report: array<string, int>}|null $maintenance */
+$maintenanceAge = $maintenance === null ? null : (time() - (int) strtotime($maintenance['last_run']));
+$maintenanceLate = $maintenanceAge === null || $maintenanceAge > 2 * 86400;
 ?>
 <section class="page-hero compact">
     <div class="page-hero-inner wide">
@@ -23,5 +26,12 @@
         <li><a class="card stat" href="/admin/pozvanky">
             <b><?= (int) $pendingInvitations ?></b><span>platných pozvánek čeká na registraci</span></a></li>
     </ul>
+    <?php if ($maintenanceLate): ?>
+        <p class="notice-danger" role="alert"><strong>Denní úklid <?= $maintenance === null ? 'zatím nikdy neproběhl' : 'neproběhl déle než 2 dny' ?>.</strong>
+            Zkontrolujte plánovanou úlohu na WEDOS (návod v docs/UKLID.md). Bez ní se prošlé záznamy nepřepínají
+            a stará data se nemažou podle zásad ochrany osobních údajů.</p>
+    <?php else: ?>
+        <p class="muted small-print">Denní úklid naposledy proběhl <?= e(format_datetime(gmdate('Y-m-d H:i:s', (int) strtotime($maintenance['last_run'])))) ?>.</p>
+    <?php endif; ?>
     <p class="muted">Nabídky a poptávky se zveřejňují bez schvalování. Nevhodný záznam můžete v detailu stáhnout s uvedením důvodu.</p>
 </div>

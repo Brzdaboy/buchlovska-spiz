@@ -11,6 +11,7 @@ use App\Auth\OidcClient;
 use App\Controller\AdminController;
 use App\Controller\AdminListingController;
 use App\Controller\AdminUserController;
+use App\Controller\CronController;
 use App\Controller\AuthController;
 use App\Controller\DemandController;
 use App\Controller\MarketController;
@@ -23,6 +24,7 @@ use App\Repository\InvitationRepository;
 use App\Repository\ProfileRepository;
 use App\Repository\UserRepository;
 use App\Service\InvitationService;
+use App\Service\Maintenance;
 use App\Http\HttpException;
 use App\Http\Request;
 use App\Http\Response;
@@ -175,6 +177,25 @@ final class App
         return $this->oidc ??= new OidcClient($this->http, $endpoint, $appId, $secret, $cacheDir);
     }
 
+    /** Soubor se stavem posledního denního úklidu (var/cache/maintenance.json). */
+    public function maintenanceStateFile(): string
+    {
+        return rtrim((string) $this->config->get('app.var_dir', $this->projectRoot . '/var'), '/') . '/cache/maintenance.json';
+    }
+
+    /** Denní úklid: expirace záznamů a mazání dat podle zásad ochrany osobních údajů. */
+    public function maintenance(): Maintenance
+    {
+        return new Maintenance(
+            $this->db->pdo(),
+            $this->logger->directory(),
+            $this->maintenanceStateFile(),
+            $this->logger,
+            $this->logtoManagement(),
+            (bool) $this->config->get('maintenance.delete_logto_accounts', true),
+        );
+    }
+
     /** Klient Logto Management API, nebo null, pokud M2M aplikace není nastavená. */
     public function logtoManagement(): ?LogtoManagement
     {
@@ -257,5 +278,6 @@ final class App
         (new AdminController($this))->register($this->router);
         (new AdminListingController($this))->register($this->router);
         (new AdminUserController($this))->register($this->router);
+        (new CronController($this))->register($this->router);
     }
 }

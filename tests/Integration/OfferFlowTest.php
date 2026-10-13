@@ -211,20 +211,20 @@ final class OfferFlowTest extends DatabaseTestCase
 
     // --- smazání ----------------------------------------------------------------------------
 
-    public function testDeleteRequiresConfirmationAndIsSoft(): void
+    public function testDeleteRequiresConfirmationAndIsPermanent(): void
     {
         $id = $this->createOffer();
         self::assertStringContainsString('Smazat nabídku?', $this->get("/moje-nabidky/{$id}/smazat")->body);
 
         $this->post("/moje-nabidky/{$id}/smazat");
-        self::assertNull($this->offer($id)['deleted_at'], 'bez potvrzení se nic nestane');
+        self::assertNotSame([], $this->offer($id), 'bez potvrzení se nic nestane');
 
         $this->post("/moje-nabidky/{$id}/smazat", ['confirm' => '1']);
-        self::assertNotNull($this->offer($id)['deleted_at'], 'řádek zůstává v DB (měkké smazání)');
+        self::assertSame([], $this->offer($id), 'záznam zmizel z databáze (ROZHODNUTI č. 12)');
         $list = $this->get('/portal')->body;
         self::assertStringContainsString('je smazaná', $list);
         self::assertStringNotContainsString("/moje-nabidky/{$id}/upravit", $list, 'v seznamu už není');
         self::assertSame(404, $this->get("/moje-nabidky/{$id}/upravit")->status);
-        self::assertSame(1, $this->auditCount('offer.deleted'));
+        self::assertSame(0, $this->auditCount('offer.created'), 'historie zmizela se záznamem');
     }
 }

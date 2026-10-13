@@ -31,6 +31,9 @@ final class FakeLogto implements HttpClient
     private int $sequence = 0;
     public ?string $issuerOverride = null;
 
+    /** Simulace výpadku Logto při mazání účtu. */
+    public bool $failUserDeletion = false;
+
     public function __construct()
     {
         $this->rotateKey();
@@ -133,6 +136,9 @@ final class FakeLogto implements HttpClient
                 return ['status' => 501, 'body' => '{"message":"No email connector is configured for the tenant."}'];
             }
             return ['status' => 201, 'body' => (string) json_encode(['id' => 'inv-' . $this->sequence, 'status' => 'Pending'])];
+        }
+        if ($method === 'DELETE' && preg_match('#^/api/users/[^/]+$#', $path)) {
+            return $this->failUserDeletion ? ['status' => 500, 'body' => '{"message":"boom"}'] : ['status' => 204, 'body' => ''];
         }
         if ($method === 'PUT' && preg_match('#^/api/(one-time-tokens|organization-invitations)/[^/]+/status$#', $path)) {
             return ['status' => 200, 'body' => '{}'];

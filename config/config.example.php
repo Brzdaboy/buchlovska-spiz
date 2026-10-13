@@ -45,4 +45,13 @@ return [
         // Organizace "Buchlovská spíž – členové" (Logto Console → Organizations, ID z detailu)
         'members_organization_id' => '',
     ],
+    // Denní úklid (docs/UKLID.md). Klíč pro adresu /cron/denni?klic=… – aspoň 32 náhodných
+    // znaků, např. výstup: php -r "echo bin2hex(random_bytes(24));"  Prázdný = adresa vypnutá.
+    'cron' => [
+        'key' => '',
+    ],
+    'maintenance' => [
+        // Při smazání archivovaného účtu (3 roky po archivaci) smazat i účet v Logto.
+        'delete_logto_accounts' => true,
+    ],
 ];

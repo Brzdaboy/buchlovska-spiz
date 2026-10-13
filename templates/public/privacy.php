@@ -86,6 +86,7 @@ $todo = static fn (string $text): string => '<mark class="todo">[' . e($text) . 
         <li>údaje aktivního účtu: po dobu trvání účtu a používání služby;</li>
         <li>profil a obsah po ukončení účtu: nejvýše 3 roky, pokud je to nezbytné pro ochranu právních nároků; údaje nepotřebné pro tento účel budou odstraněny nebo anonymizovány dříve;</li>
         <li>smazané nabídky a poptávky: odstranění z aktivní databáze bez zbytečného odkladu; v zálohách mohou přetrvat nejvýše 30 dnů;</li>
+        <li>historie změn nabídky nebo poptávky (kdo a kdy ji vytvořil, upravil, ukončil nebo stáhl): po dobu existence záznamu; smaže se spolu s ním;</li>
         <li>bezpečnostní a provozní logy: nejvýše 90 dnů, není-li delší uchování nutné kvůli konkrétnímu bezpečnostnímu incidentu;</li>
         <li>komunikace se správcem: po dobu nezbytnou k vyřízení požadavku a následně nejvýše 3 roky;</li>
         <li>údaje, které musí být uchovány podle právních předpisů: po dobu stanovenou příslušným právním předpisem.</li>

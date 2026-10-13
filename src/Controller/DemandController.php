@@ -201,10 +201,7 @@ final class DemandController
         if ($request->input('confirm') !== '1') {
             return Response::redirect('/moje-poptavky/' . (int) $demand['id'] . '/smazat');
         }
-        $this->demands()->softDelete((int) $demand['id'], (int) $user['id']);
-        $this->app->audit()->record((int) $user['id'], 'demand.deleted', 'demand', (int) $demand['id'], [
-            'product_name' => (string) $demand['product_name'],
-        ]);
+        $this->demands()->delete((int) $demand['id'], (int) $user['id']);
         $this->app->session()->flash('success', 'Poptávka „' . $demand['product_name'] . '“ je smazaná.');
         return Response::redirect('/portal');
     }

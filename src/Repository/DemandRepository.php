@@ -84,9 +84,22 @@ final class DemandRepository
         )->execute([$neededFrom, $neededUntil, $id, $schoolId]);
     }
 
-    public function softDelete(int $id, int $schoolId): void
+    /**
+     * Smazání autorem: záznam i jeho historie změn zmizí z databáze hned (ROZHODNUTI č. 4 a 12).
+     */
+    public function delete(int $id, int $schoolId): void
     {
-        $this->pdo->prepare('UPDATE demands SET deleted_at = UTC_TIMESTAMP() WHERE id = ? AND school_user_id = ? AND deleted_at IS NULL')
-            ->execute([$id, $schoolId]);
+        $this->pdo->beginTransaction();
+        try {
+            $stmt = $this->pdo->prepare('DELETE FROM demands WHERE id = ? AND school_user_id = ?');
+            $stmt->execute([$id, $schoolId]);
+            if ($stmt->rowCount() > 0) {
+                $this->pdo->prepare("DELETE FROM audit_log WHERE target_type = 'demand' AND target_id = ?")->execute([$id]);
+            }
+            $this->pdo->commit();
+        } catch (\Throwable $e) {
+            $this->pdo->rollBack();
+            throw $e;
+        }
     }
 }

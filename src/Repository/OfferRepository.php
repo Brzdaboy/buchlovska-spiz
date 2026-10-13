@@ -87,9 +87,22 @@ final class OfferRepository
         $this->pdo->prepare($sql)->execute($params);
     }
 
-    public function softDelete(int $id, int $producerId): void
+    /**
+     * Smazání autorem: záznam i jeho historie změn zmizí z databáze hned (ROZHODNUTI č. 4 a 12).
+     */
+    public function delete(int $id, int $producerId): void
     {
-        $this->pdo->prepare('UPDATE offers SET deleted_at = UTC_TIMESTAMP() WHERE id = ? AND producer_user_id = ? AND deleted_at IS NULL')
-            ->execute([$id, $producerId]);
+        $this->pdo->beginTransaction();
+        try {
+            $stmt = $this->pdo->prepare('DELETE FROM offers WHERE id = ? AND producer_user_id = ?');
+            $stmt->execute([$id, $producerId]);
+            if ($stmt->rowCount() > 0) {
+                $this->pdo->prepare("DELETE FROM audit_log WHERE target_type = 'offer' AND target_id = ?")->execute([$id]);
+            }
+            $this->pdo->commit();
+        } catch (\Throwable $e) {
+            $this->pdo->rollBack();
+            throw $e;
+        }
     }
 }

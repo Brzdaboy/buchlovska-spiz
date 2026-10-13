@@ -11,6 +11,12 @@ final class Logger
     {
     }
 
+    /** Složka s denními soubory app-RRRR-MM-DD.log (úklid je maže po 90 dnech). */
+    public function directory(): string
+    {
+        return $this->directory;
+    }
+
     /** @param array<string, scalar|null> $context */
     public function error(string $message, array $context = []): void
     {

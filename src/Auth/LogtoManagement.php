@@ -9,7 +9,8 @@ use RuntimeException;
 
 /**
  * Volání Logto Management API přes aplikaci typu Machine-to-machine.
- * Používá se pro pozvánky (jednorázový token + organizační pozvánka s e-mailem).
+ * Používá se pro pozvánky (jednorázový token + organizační pozvánka s e-mailem)
+ * a pro smazání účtu při úklidu archivovaných uživatelů.
  */
 final class LogtoManagement
 {
@@ -75,6 +76,17 @@ final class LogtoManagement
             'status' => 'Accepted',
             'acceptedUserId' => $logtoUserId,
         ], 200);
+    }
+
+    /** Smaže uživatele v Logto (e-mail, heslo, relace). Už neexistující účet není chyba. */
+    public function deleteUser(string $logtoUserId): void
+    {
+        $response = $this->http->sendJson('DELETE', $this->endpoint . '/api/users/' . rawurlencode($logtoUserId), [], [
+            'Authorization' => 'Bearer ' . $this->token(),
+        ]);
+        if (!in_array($response['status'], [200, 204, 404], true)) {
+            throw new RuntimeException(sprintf('Logto DELETE /api/users vrátilo HTTP %d: %s', $response['status'], substr($response['body'], 0, 300)));
+        }
     }
 
     /**
