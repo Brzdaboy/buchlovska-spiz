@@ -28,6 +28,18 @@ final class Router
         $this->routes[$pattern][strtoupper($method)] = $handler;
     }
 
+    /** @return list<array{0: string, 1: string}> všechny trasy jako [metoda, vzor] (pro test oprávnění) */
+    public function routes(): array
+    {
+        $list = [];
+        foreach ($this->routes as $pattern => $handlers) {
+            foreach (array_keys($handlers) as $method) {
+                $list[] = [$method, $pattern];
+            }
+        }
+        return $list;
+    }
+
     public function dispatch(Request $request): Response
     {
         foreach ($this->routes as $pattern => $handlers) {
