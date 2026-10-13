@@ -312,6 +312,21 @@ final class MarketFlowTest extends DatabaseTestCase
         self::assertSame(1, self::cards($this->get('/poptavky', ['q' => 'stavnata'])));
     }
 
+    public function testEveryCzechDiacriticLetterMatchesItsBaseLetter(): void
+    {
+        $pairs = ['ě' => 'e', 'š' => 's', 'č' => 'c', 'ř' => 'r', 'ž' => 'z', 'ý' => 'y', 'á' => 'a', 'í' => 'i', 'é' => 'e',
+            'ú' => 'u', 'ů' => 'u', 'ď' => 'd', 'ť' => 't', 'ň' => 'n', 'ó' => 'o'];
+        $stmt = $this->db()->prepare("SELECT ? COLLATE utf8mb4_unicode_ci LIKE ?");
+        foreach ($pairs as $accented => $base) {
+            foreach ([$accented, mb_strtoupper($accented)] as $letter) {
+                $stmt->execute(["x{$letter}x", "%x{$base}x%"]);
+                self::assertSame(1, (int) $stmt->fetchColumn(), "{$letter} = {$base}");
+                $stmt->execute(["x{$base}x", "%x{$letter}x%"]);
+                self::assertSame(1, (int) $stmt->fetchColumn(), "{$base} = {$letter}");
+            }
+        }
+    }
+
     public function testCategoryFilter(): void
     {
         $this->offer(['product_name' => 'Brambory']);
