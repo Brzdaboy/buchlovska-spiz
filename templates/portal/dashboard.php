@@ -33,7 +33,7 @@ $badges = [
             <li><a class="card admin-link" href="/nabidky"><strong>Nabídky</strong><span>Tržiště tak, jak ho vidí členové.</span></a></li>
             <li><a class="card admin-link" href="/poptavky"><strong>Poptávky</strong><span>Co shánějí školy.</span></a></li>
         </ul>
-    <?php elseif ($profile !== null): ?>
+    <?php else: ?>
         <section class="card own-listings" aria-labelledby="own-heading">
             <div class="own-summary">
                 <div>
@@ -52,30 +52,56 @@ $badges = [
                 </div>
                 <div class="own-summary-actions">
                     <a class="button" href="<?= $ownBase ?>/nova"><?= $isProducer ? 'Přidat nabídku' : 'Přidat poptávku' ?> <span aria-hidden="true">+</span></a>
-                    <?php if ($own !== []): ?><a class="button secondary" href="<?= $ownBase ?>">Spravovat</a><?php endif; ?>
                 </div>
             </div>
             <?php if ($own !== []): ?>
                 <ul class="own-list">
-                    <?php foreach ($own as $row): $state = (string) $row['state']; ?>
-                        <li>
+                    <?php foreach ($own as $row):
+                        $state = (string) $row['state'];
+                        $id = (int) $row['id'];
+                        $isPublic = $state === ListingState::ACTIVE;
+                        $previewUrl = ($isProducer ? '/nabidky/' : '/poptavky/') . $id;
+                        ?>
+                        <li class="own-item">
                             <span class="badge <?= e($badges[$state] ?? 'badge-muted') ?>"><?= e(ListingState::LABELS[$state] ?? $state) ?></span>
-                            <a class="own-name" href="<?= $ownBase ?>/<?= (int) $row['id'] ?>/upravit"><?= e($row['product_name']) ?></a>
-                            <span class="muted own-facts">
-                                <?php if ($isProducer): ?>
-                                    <?= e(format_price((string) $row['unit_price'], (string) $row['price_unit'])) ?>
-                                    · <?= e(format_number((string) $row['available_quantity'])) ?>&nbsp;<?= e($row['quantity_unit']) ?>
+                            <div class="own-main">
+                                <?php if ($isPublic): ?>
+                                    <a class="own-name" href="<?= e($previewUrl) ?>"><?= e($row['product_name']) ?></a>
                                 <?php else: ?>
-                                    <?= e(format_number((string) $row['requested_quantity'])) ?>&nbsp;<?= e($row['quantity_unit']) ?>
-                                    · <?= e(format_date($row['needed_from'])) ?> – <?= e(format_date($row['needed_until'])) ?>
+                                    <span class="own-name"><?= e($row['product_name']) ?></span>
                                 <?php endif; ?>
-                            </span>
+                                <span class="muted own-facts">
+                                    <?php if ($isProducer): ?>
+                                        <?= e(format_price((string) $row['unit_price'], (string) $row['price_unit'])) ?>
+                                        · <?= e(format_number((string) $row['available_quantity'])) ?>&nbsp;<?= e($row['quantity_unit']) ?>
+                                    <?php else: ?>
+                                        <?= e(format_number((string) $row['requested_quantity'])) ?>&nbsp;<?= e($row['quantity_unit']) ?>
+                                        · <?= e(format_date($row['needed_from'])) ?> – <?= e(format_date($row['needed_until'])) ?>
+                                    <?php endif; ?>
+                                </span>
+                                <?php if (in_array($state, [ListingState::WITHDRAWN, ListingState::RESUBMITTED], true)): ?>
+                                    <p class="own-notice"><strong>Staženo správcem:</strong> <?= e($row['withdrawal_reason']) ?>
+                                        <?= $state === ListingState::WITHDRAWN ? '– upravte záznam, po opravě ho správce znovu uvolní.' : '– oprava čeká na uvolnění správcem.' ?></p>
+                                <?php endif; ?>
+                            </div>
+                            <div class="own-actions">
+                                <?php if ($isPublic): ?><a class="button small secondary" href="<?= e($previewUrl) ?>">Náhled</a><?php endif; ?>
+                                <a class="button small secondary" href="<?= $ownBase ?>/<?= $id ?>/upravit">Upravit</a>
+                                <?php if (ListingState::canEnd($state)): ?>
+                                    <form method="post" action="<?= $ownBase ?>/<?= $id ?>/ukoncit"><?= $csrf->field() ?><button class="button small secondary" type="submit">Ukončit</button></form>
+                                <?php endif; ?>
+                                <?php if (ListingState::canReactivate($state)): ?>
+                                    <a class="button small secondary" href="<?= $ownBase ?>/<?= $id ?>/obnovit">Znovu zveřejnit</a>
+                                <?php endif; ?>
+                                <a class="button small danger" href="<?= $ownBase ?>/<?= $id ?>/smazat">Smazat</a>
+                            </div>
                         </li>
                     <?php endforeach; ?>
                 </ul>
             <?php endif; ?>
         </section>
 
+        <?php if ($profile !== null): ?>
         <div class="card">
             <h2>Moje údaje</h2>
             <p class="muted">Takto vás vidí ostatní členové u <?= $isProducer ? 'vašich nabídek' : 'vašich poptávek' ?>.</p>
@@ -89,6 +115,7 @@ $badges = [
             </dl>
             <p><a class="button secondary small" href="/profil">Upravit údaje</a></p>
         </div>
+        <?php endif; ?>
     <?php endif; ?>
     <form method="post" action="/odhlaseni">
         <?= $csrf->field() ?>

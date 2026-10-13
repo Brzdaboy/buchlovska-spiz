@@ -12,7 +12,7 @@ $availability = $value('availability_type') ?: 'immediate';
 ?>
 <section class="page-hero compact">
     <div class="page-hero-inner wide">
-        <?php $crumbs = [['Moje nabídky', '/moje-nabidky'], [$isNew ? 'Nová nabídka' : (string) $offer['product_name'], null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
+        <?php $crumbs = [[$isNew ? 'Nová nabídka' : (string) $offer['product_name'], null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1><?= $isNew ? 'Nová nabídka' : 'Upravit nabídku' ?></h1>
         <p class="lead">
             <?php if ($isNew): ?>
@@ -73,7 +73,7 @@ $availability = $value('availability_type') ?: 'immediate';
 
         <div class="form-actions">
             <button class="button" type="submit"><?= $isNew ? 'Zveřejnit nabídku' : 'Uložit změny' ?></button>
-            <a class="button secondary" href="/moje-nabidky">Zrušit</a>
+            <a class="button secondary" href="/portal">Zrušit</a>
         </div>
     </form>
 </div>

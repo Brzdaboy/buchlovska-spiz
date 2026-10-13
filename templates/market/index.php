@@ -22,7 +22,7 @@ $noun = $isOffer
     ? ($count === 1 ? 'nabídka' : ($count >= 2 && $count <= 4 ? 'nabídky' : 'nabídek'))
     : ($count === 1 ? 'poptávka' : ($count >= 2 && $count <= 4 ? 'poptávky' : 'poptávek'));
 $ownLink = $user['role'] === ($isOffer ? 'producer' : 'school')
-    ? ($isOffer ? ['/moje-nabidky', 'Moje nabídky'] : ['/moje-poptavky', 'Moje poptávky'])
+    ? ($isOffer ? ['/portal', 'Moje nabídky'] : ['/portal', 'Moje poptávky'])
     : null;
 ?>
 <section class="page-hero compact">

@@ -73,13 +73,11 @@ final class DemandController
         return [$user, $demand];
     }
 
+    /** Samostatný přehled byl nahrazen Mým portálem; stará adresa tam přesměruje. */
     public function index(): Response
     {
-        $user = $this->school();
-        return $this->page('demands/index', 'Moje poptávky', [
-            'demands' => $this->demands()->listOwned((int) $user['id']),
-            'today' => today(),
-        ]);
+        $this->school();
+        return Response::redirect('/portal');
     }
 
     public function create(): Response
@@ -98,7 +96,7 @@ final class DemandController
         $id = $this->demands()->create((int) $user['id'], $result['data']);
         $this->app->audit()->record((int) $user['id'], 'demand.created', 'demand', $id);
         $this->app->session()->flash('success', 'Poptávka je zveřejněná. Uvidí ji všichni přihlášení členové.');
-        return Response::redirect('/moje-poptavky');
+        return Response::redirect('/portal');
     }
 
     /** @param array<string, string> $params */
@@ -131,7 +129,7 @@ final class DemandController
         $this->app->session()->flash('success', $newStatus === ListingState::RESUBMITTED
             ? 'Oprava je uložená. Poptávka se zveřejní, až ji správce znovu uvolní.'
             : 'Změny jsou uložené a hned viditelné.');
-        return Response::redirect('/moje-poptavky');
+        return Response::redirect('/portal');
     }
 
     /** @param array<string, string> $params */
@@ -140,12 +138,12 @@ final class DemandController
         [$user, $demand] = $this->owned($params);
         if (!ListingState::canEnd(ListingState::effective((string) $demand['status'], $demand['needed_until'], today()))) {
             $this->app->session()->flash('error', 'Tuto poptávku nelze ukončit.');
-            return Response::redirect('/moje-poptavky');
+            return Response::redirect('/portal');
         }
         $this->demands()->end((int) $demand['id'], (int) $user['id']);
         $this->app->audit()->record((int) $user['id'], 'demand.ended', 'demand', (int) $demand['id']);
         $this->app->session()->flash('success', 'Poptávka je ukončená. Kdykoli ji můžete znovu zveřejnit.');
-        return Response::redirect('/moje-poptavky');
+        return Response::redirect('/portal');
     }
 
     /** @param array<string, string> $params */
@@ -186,7 +184,7 @@ final class DemandController
             'needed_until' => $until,
         ]);
         $this->app->session()->flash('success', 'Poptávka je znovu zveřejněná.');
-        return Response::redirect('/moje-poptavky');
+        return Response::redirect('/portal');
     }
 
     /** @param array<string, string> $params */
@@ -208,7 +206,7 @@ final class DemandController
             'product_name' => (string) $demand['product_name'],
         ]);
         $this->app->session()->flash('success', 'Poptávka „' . $demand['product_name'] . '“ je smazaná.');
-        return Response::redirect('/moje-poptavky');
+        return Response::redirect('/portal');
     }
 
     /** @param array<string, mixed> $demand */

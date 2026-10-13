@@ -56,13 +56,13 @@ final class DemandFlowTest extends DatabaseTestCase
     public function testSchoolCreatesDemandThatIsActiveImmediately(): void
     {
         $response = $this->post('/moje-poptavky', Fixtures::demandForm());
-        self::assertSame('/moje-poptavky', $response->headers['Location']);
+        self::assertSame('/portal', $response->headers['Location']);
 
         $demand = $this->demand((int) $this->db()->query('SELECT MAX(id) FROM demands')->fetchColumn());
         self::assertSame(['active', $this->school, '120.000'], [$demand['status'], (int) $demand['school_user_id'], $demand['requested_quantity']]);
         self::assertSame(1, (int) $this->db()->query("SELECT COUNT(*) FROM audit_log WHERE action = 'demand.created'")->fetchColumn());
 
-        $list = $this->get('/moje-poptavky')->body;
+        $list = $this->get('/portal')->body;
         self::assertStringContainsString('Jablka', $list);
         self::assertStringContainsString('120&nbsp;kg', $list);
         self::assertStringNotContainsString('Kč', $list, 'poptávka nemá cenu');
@@ -110,7 +110,7 @@ final class DemandFlowTest extends DatabaseTestCase
         $admin = $this->createUser('admin');
         $this->db()->exec("UPDATE demands SET status = 'withdrawn', withdrawn_by = {$admin}, withdrawn_at = UTC_TIMESTAMP(), withdrawal_reason = 'Duplicitní poptávka' WHERE id = {$id}");
 
-        self::assertStringContainsString('Duplicitní poptávka', $this->get('/moje-poptavky')->body);
+        self::assertStringContainsString('Duplicitní poptávka', $this->get('/portal')->body);
         $this->post("/moje-poptavky/{$id}", Fixtures::demandForm(['note' => 'Opraveno']));
         self::assertSame('resubmitted', $this->demand($id)['status']);
     }
@@ -120,7 +120,7 @@ final class DemandFlowTest extends DatabaseTestCase
         $id = $this->createDemand();
         $this->db()->exec("UPDATE demands SET needed_from = CURDATE() - INTERVAL 20 DAY, needed_until = CURDATE() - INTERVAL 1 DAY WHERE id = {$id}");
 
-        self::assertStringContainsString('Vypršelo', $this->get('/moje-poptavky')->body);
+        self::assertStringContainsString('Vypršelo', $this->get('/portal')->body);
         self::assertStringContainsString('už skončilo', $this->get("/moje-poptavky/{$id}/obnovit")->body);
 
         // Odeslání s původním (prošlým) obdobím neprojde.

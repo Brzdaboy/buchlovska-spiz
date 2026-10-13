@@ -450,14 +450,27 @@ ul { padding-left: 1.2em; }
 .form-inline .radio { margin-right: 0; white-space: nowrap; }
 .own-listings .own-summary { margin: 0; }
 .own-list { list-style: none; padding: 0; margin: 20px 0 0; border-top: 1px solid var(--line); }
-.own-list li { display: grid; grid-template-columns: 128px minmax(0, 1fr) auto; gap: 6px 16px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); }
-.own-list li:last-child { border-bottom: 0; padding-bottom: 0; }
-.own-list .badge { justify-self: start; }
+.own-item { display: grid; grid-template-columns: 128px minmax(0, 1fr) auto; gap: 8px 16px; align-items: center; padding: 10px 8px; margin: 0 -8px; border-bottom: 1px solid var(--line); border-radius: 10px; min-height: 58px; }
+.own-item:last-child { border-bottom: 0; }
+.own-item .badge { justify-self: start; }
+.own-main { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 14px; min-width: 0; }
 .own-name { font-weight: 700; color: var(--ink); }
-.own-facts { font-size: 14px; text-align: right; }
-@media (max-width: 640px) {
-  .own-list li { grid-template-columns: 1fr; }
-  .own-facts { text-align: left; }
+a.own-name:hover { color: var(--green-2); }
+.own-facts { font-size: 14px; }
+.own-notice { flex-basis: 100%; margin: 4px 0 0; font-size: 14px; color: var(--danger); }
+.own-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+.own-actions form { margin: 0; display: flex; }
+/* Na počítači se akce ukážou při najetí myší nebo při pohybu klávesnicí (Tab). */
+@media (hover: hover) and (pointer: fine) {
+  .own-item:hover, .own-item:focus-within { background: #f7faf3; }
+  .own-actions { opacity: 0; transition: opacity .12s; }
+  .own-item:hover .own-actions, .own-item:focus-within .own-actions { opacity: 1; }
+}
+@media (max-width: 760px) {
+  .own-item { grid-template-columns: 1fr; gap: 6px; padding: 14px 0; margin: 0; }
+  .own-actions { justify-content: flex-start; flex-wrap: nowrap; gap: 6px; }
+  .own-actions > *, .own-actions form .button { flex: 1 1 0; }
+  .own-actions .button { width: 100%; padding: 9px 6px; font-size: 13px; text-align: center; white-space: nowrap; }
 }
 
 /* ---------- Výpis tržiště: řádky a dlaždice (bez fotografií) ---------- */

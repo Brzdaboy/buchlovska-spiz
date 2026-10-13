@@ -72,13 +72,11 @@ final class OfferController
         return [$user, $offer];
     }
 
+    /** Samostatný přehled byl nahrazen Mým portálem; stará adresa tam přesměruje. */
     public function index(): Response
     {
-        $user = $this->producer();
-        return $this->page('offers/index', 'Moje nabídky', [
-            'offers' => $this->offers()->listOwned((int) $user['id']),
-            'today' => today(),
-        ]);
+        $this->producer();
+        return Response::redirect('/portal');
     }
 
     public function create(): Response
@@ -97,7 +95,7 @@ final class OfferController
         $id = $this->offers()->create((int) $user['id'], $result['data']);
         $this->app->audit()->record((int) $user['id'], 'offer.created', 'offer', $id);
         $this->app->session()->flash('success', 'Nabídka je zveřejněná. Uvidí ji všichni přihlášení členové.');
-        return Response::redirect('/moje-nabidky');
+        return Response::redirect('/portal');
     }
 
     /** @param array<string, string> $params */
@@ -132,7 +130,7 @@ final class OfferController
         $this->app->session()->flash('success', $newStatus === ListingState::RESUBMITTED
             ? 'Oprava je uložená. Nabídka se zveřejní, až ji správce znovu uvolní.'
             : 'Změny jsou uložené a hned viditelné.');
-        return Response::redirect('/moje-nabidky');
+        return Response::redirect('/portal');
     }
 
     /** @param array<string, string> $params */
@@ -142,12 +140,12 @@ final class OfferController
         $effective = ListingState::effective((string) $offer['status'], $offer['available_until'], today());
         if (!ListingState::canEnd($effective)) {
             $this->app->session()->flash('error', 'Tuto nabídku nelze ukončit.');
-            return Response::redirect('/moje-nabidky');
+            return Response::redirect('/portal');
         }
         $this->offers()->end((int) $offer['id'], (int) $user['id']);
         $this->app->audit()->record((int) $user['id'], 'offer.ended', 'offer', (int) $offer['id']);
         $this->app->session()->flash('success', 'Nabídka je ukončená. Kdykoli ji můžete znovu zveřejnit.');
-        return Response::redirect('/moje-nabidky');
+        return Response::redirect('/portal');
     }
 
     /** @param array<string, string> $params */
@@ -190,7 +188,7 @@ final class OfferController
             'available_until' => $changeUntil ? $newUntil : $offer['available_until'],
         ]);
         $this->app->session()->flash('success', 'Nabídka je znovu zveřejněná.');
-        return Response::redirect('/moje-nabidky');
+        return Response::redirect('/portal');
     }
 
     /** @param array<string, string> $params */
@@ -212,7 +210,7 @@ final class OfferController
             'product_name' => (string) $offer['product_name'],
         ]);
         $this->app->session()->flash('success', 'Nabídka „' . $offer['product_name'] . '“ je smazaná.');
-        return Response::redirect('/moje-nabidky');
+        return Response::redirect('/portal');
     }
 
     /** @param array<string, mixed> $offer */

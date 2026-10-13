@@ -9,7 +9,7 @@ $periodOver = $demand['needed_until'] < $today;
 ?>
 <section class="page-hero compact">
     <div class="page-hero-inner wide">
-        <?php $crumbs = [['Moje poptávky', '/moje-poptavky'], ['Znovu zveřejnit: ' . $demand['product_name'], null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
+        <?php $crumbs = [['Znovu zveřejnit: ' . $demand['product_name'], null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1>Znovu zveřejnit: <?= e($demand['product_name']) ?></h1>
         <p class="lead">Poptávka se zveřejní hned, bez schvalování.</p>
     </div>
@@ -30,7 +30,7 @@ $periodOver = $demand['needed_until'] < $today;
         </div>
         <div class="form-actions">
             <button class="button" type="submit">Znovu zveřejnit</button>
-            <a class="button secondary" href="/moje-poptavky">Zrušit</a>
+            <a class="button secondary" href="/portal">Zrušit</a>
         </div>
     </form>
 </div>

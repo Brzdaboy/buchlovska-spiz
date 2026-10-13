@@ -246,6 +246,27 @@ final class MarketFlowTest extends DatabaseTestCase
         self::assertStringNotContainsString('600 123 456', $response->body);
     }
 
+    public function testPortalRowsHaveActionsByStateAndOldListRedirects(): void
+    {
+        $active = $this->offer(['product_name' => 'Aktivní maso']);
+        $ended = $this->offer(['product_name' => 'Ukončená paprika', 'status' => 'ended']);
+        $this->as($this->producer, 'producer');
+        $body = $this->get('/portal')->body;
+
+        self::assertStringNotContainsString('Spravovat', $body);
+        self::assertStringContainsString('<a class="own-name" href="/nabidky/' . $active . '">Aktivní maso</a>', $body, 'název = náhled');
+        self::assertStringContainsString('href="/nabidky/' . $active . '">Náhled</a>', $body);
+        self::assertStringContainsString('action="/moje-nabidky/' . $active . '/ukoncit"', $body);
+        self::assertStringContainsString('<span class="own-name">Ukončená paprika</span>', $body, 'nezveřejněná nemá náhled');
+        self::assertStringContainsString('href="/moje-nabidky/' . $ended . '/obnovit">Znovu zveřejnit</a>', $body);
+        self::assertStringNotContainsString('action="/moje-nabidky/' . $ended . '/ukoncit"', $body);
+        self::assertStringContainsString('href="/moje-nabidky/' . $ended . '/smazat"', $body);
+
+        self::assertSame('/portal', $this->get('/moje-nabidky')->headers['Location'] ?? null);
+        $this->as($this->school, 'school');
+        self::assertSame('/portal', $this->get('/moje-poptavky')->headers['Location'] ?? null);
+    }
+
     public function testBreadcrumbsLeadHomeToPortal(): void
     {
         $offer = $this->offer(['product_name' => 'Brambory Adéla']);

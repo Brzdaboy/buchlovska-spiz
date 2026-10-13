@@ -11,7 +11,7 @@ $isNew = $demand === null;
 ?>
 <section class="page-hero compact">
     <div class="page-hero-inner wide">
-        <?php $crumbs = [['Moje poptávky', '/moje-poptavky'], [$isNew ? 'Nová poptávka' : (string) $demand['product_name'], null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
+        <?php $crumbs = [[$isNew ? 'Nová poptávka' : (string) $demand['product_name'], null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1><?= $isNew ? 'Nová poptávka' : 'Upravit poptávku' ?></h1>
         <p class="lead">
             <?php if ($isNew): ?>
@@ -61,7 +61,7 @@ $isNew = $demand === null;
 
         <div class="form-actions">
             <button class="button" type="submit"><?= $isNew ? 'Zveřejnit poptávku' : 'Uložit změny' ?></button>
-            <a class="button secondary" href="/moje-poptavky">Zrušit</a>
+            <a class="button secondary" href="/portal">Zrušit</a>
         </div>
     </form>
 </div>

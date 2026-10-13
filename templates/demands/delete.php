@@ -4,7 +4,7 @@
 ?>
 <section class="page-hero compact">
     <div class="page-hero-inner wide">
-        <?php $crumbs = [['Moje poptávky', '/moje-poptavky'], ['Smazat: ' . $demand['product_name'], null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
+        <?php $crumbs = [['Smazat: ' . $demand['product_name'], null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1>Smazat poptávku?</h1>
         <p class="lead">Poptávka <strong>„<?= e($demand['product_name']) ?>“</strong> zmizí z tržiště i z vašeho seznamu. Smazání nejde vrátit zpět.</p>
     </div>
@@ -16,7 +16,7 @@
         <p class="muted">Pokud ji chcete jen dočasně skrýt, použijte raději „Ukončit“. Ukončenou poptávku lze kdykoli znovu zveřejnit.</p>
         <div class="form-actions">
             <button class="button danger" type="submit">Ano, smazat</button>
-            <a class="button secondary" href="/moje-poptavky">Ne, ponechat</a>
+            <a class="button secondary" href="/portal">Ne, ponechat</a>
         </div>
     </form>
 </div>

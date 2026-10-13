@@ -64,7 +64,7 @@ final class OfferFlowTest extends DatabaseTestCase
     {
         $response = $this->post('/moje-nabidky', Fixtures::offerForm(['unit_price' => '14,5']));
 
-        self::assertSame('/moje-nabidky', $response->headers['Location']);
+        self::assertSame('/portal', $response->headers['Location']);
         $offer = $this->offer((int) $this->db()->query('SELECT MAX(id) FROM offers')->fetchColumn());
         self::assertSame('active', $offer['status'], 'bez předběžného schvalování');
         self::assertSame('14.50', $offer['unit_price']);
@@ -72,7 +72,7 @@ final class OfferFlowTest extends DatabaseTestCase
         self::assertSame($this->producer, (int) $offer['producer_user_id']);
         self::assertSame(1, $this->auditCount('offer.created'));
 
-        $list = $this->get('/moje-nabidky')->body;
+        $list = $this->get('/portal')->body;
         self::assertStringContainsString('Brambory Adéla', $list);
         self::assertStringContainsString('14,50', $list);
         self::assertStringContainsString('Zveřejněno', $list);
@@ -122,7 +122,7 @@ final class OfferFlowTest extends DatabaseTestCase
         self::assertSame(404, $this->post("/moje-nabidky/{$id}", Fixtures::offerForm(['product_name' => 'Ukradeno']))->status);
         self::assertSame(404, $this->post("/moje-nabidky/{$id}/ukoncit")->status);
         self::assertSame(404, $this->post("/moje-nabidky/{$id}/smazat", ['confirm' => '1'])->status);
-        self::assertStringNotContainsString('Brambory', $this->get('/moje-nabidky')->body);
+        self::assertStringNotContainsString('Brambory', $this->get('/portal')->body);
 
         $offer = $this->offer($id);
         self::assertSame(['Brambory Adéla', 'active', null], [$offer['product_name'], $offer['status'], $offer['deleted_at']]);
@@ -151,7 +151,7 @@ final class OfferFlowTest extends DatabaseTestCase
         $admin = $this->createUser('admin');
         $this->db()->exec("UPDATE offers SET status = 'withdrawn', withdrawn_by = {$admin}, withdrawn_at = UTC_TIMESTAMP(), withdrawal_reason = 'Nevhodný popis' WHERE id = {$id}");
 
-        $list = $this->get('/moje-nabidky')->body;
+        $list = $this->get('/portal')->body;
         self::assertStringContainsString('Staženo správcem', $list);
         self::assertStringContainsString('Nevhodný popis', $list);
         self::assertStringNotContainsString("/moje-nabidky/{$id}/obnovit", $list, 'stažený záznam nejde obnovit sám');
@@ -181,7 +181,7 @@ final class OfferFlowTest extends DatabaseTestCase
         $id = $this->createOffer();
         $this->db()->exec("UPDATE offers SET available_until = CURDATE() - INTERVAL 3 DAY WHERE id = {$id}");
 
-        self::assertStringContainsString('Vypršelo', $this->get('/moje-nabidky')->body);
+        self::assertStringContainsString('Vypršelo', $this->get('/portal')->body);
         self::assertStringContainsString('už uplynul', $this->get("/moje-nabidky/{$id}/obnovit")->body);
 
         $past = $this->post("/moje-nabidky/{$id}/obnovit", ['available_until' => date('Y-m-d', strtotime('-1 day'))]);
@@ -221,7 +221,7 @@ final class OfferFlowTest extends DatabaseTestCase
 
         $this->post("/moje-nabidky/{$id}/smazat", ['confirm' => '1']);
         self::assertNotNull($this->offer($id)['deleted_at'], 'řádek zůstává v DB (měkké smazání)');
-        $list = $this->get('/moje-nabidky')->body;
+        $list = $this->get('/portal')->body;
         self::assertStringContainsString('je smazaná', $list);
         self::assertStringNotContainsString("/moje-nabidky/{$id}/upravit", $list, 'v seznamu už není');
         self::assertSame(404, $this->get("/moje-nabidky/{$id}/upravit")->status);
