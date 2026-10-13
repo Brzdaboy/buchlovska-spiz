@@ -35,6 +35,8 @@ final class MarketController
         $router->get('/nabidky/{id}', fn (Request $r, array $p): Response => $this->show($p, ListingType::of('offer')));
         $router->get('/poptavky', fn (Request $r): Response => $this->index($r, ListingType::of('demand')));
         $router->get('/poptavky/{id}', fn (Request $r, array $p): Response => $this->show($p, ListingType::of('demand')));
+        $router->get('/zemedelci/{id}', fn (Request $r, array $p): Response => $this->member((int) $p['id'], 'producer', $r));
+        $router->get('/skoly/{id}', fn (Request $r, array $p): Response => $this->member((int) $p['id'], 'school', $r));
     }
 
     private function market(): MarketRepository
@@ -91,6 +93,25 @@ final class MarketController
             'type' => $type,
             'item' => $item,
             'isOwn' => $ownerId === (int) $user['id'],
+        ]));
+    }
+
+    /** Veřejný (pro členy) profil zemědělce nebo školy se zveřejněnými záznamy. Neaktivní účet = 404. */
+    private function member(int $id, string $role, Request $request): Response
+    {
+        $this->app->auth()->requireActive();
+        $member = $this->market()->member($role, $id);
+        if ($member === null) {
+            throw HttpException::notFound();
+        }
+        $isProducer = $role === 'producer';
+        return Response::html($this->app->view->render('market/member', [
+            'title' => (string) ($isProducer ? $member['producer_name'] : $member['school_name']),
+            'member' => $member,
+            'isProducer' => $isProducer,
+            'type' => ListingType::of($isProducer ? 'offer' : 'demand'),
+            'items' => $isProducer ? $this->market()->offersOf($id, today()) : $this->market()->demandsOf($id, today()),
+            'view' => $this->view($request),
         ]));
     }
 }

@@ -513,3 +513,12 @@ ul { padding-left: 1.2em; }
 .legal h3 { font-size: 19px; margin: 1.4em 0 .4em; }
 .legal .placeholder-note { margin: 18px 0; }
 mark.todo { background: #fff1b8; color: #6b5310; padding: 0 4px; border-radius: 4px; font-weight: 700; }
+
+/* ---------- Profil člena ---------- */
+.market-contact h2 a { color: inherit; text-decoration: none; }
+.market-contact h2 a:hover { text-decoration: underline; }
+.member-link { margin: -4px 0 14px; font-size: 14px; }
+.member-listings-heading { margin: 0 0 14px; font-size: 24px; }
+.member-listings-heading .muted { font: 400 18px var(--sans); }
+.member-profile .market-tiles { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+@media (max-width: 900px) { .member-profile > aside { order: -1; } }

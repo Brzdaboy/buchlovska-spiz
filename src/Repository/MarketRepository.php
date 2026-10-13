@@ -121,6 +121,41 @@ final class MarketRepository
         return $this->one('SELECT ' . self::DEMAND_COLUMNS . ' ' . self::DEMAND_FROM . ' AND d.id = ?', [$today, $id]);
     }
 
+    // --- profil člena --------------------------------------------------------------------
+
+    /**
+     * Profil zemědělce nebo školy pro ostatní členy: jen aktivní účet s vyplněným profilem.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function member(string $role, int $userId): ?array
+    {
+        $table = match ($role) {
+            'producer' => 'producer_profiles',
+            'school' => 'school_profiles',
+            default => throw new \InvalidArgumentException('Profil mají jen zemědělci a školy.'),
+        };
+        return $this->one(
+            "SELECT p.*, u.id AS user_id, u.role FROM users u JOIN {$table} p ON p.user_id = u.id
+             WHERE u.id = ? AND u.role = ? AND u.status = 'active'",
+            [$userId, $role]
+        );
+    }
+
+    /** @return list<array<string, mixed>> zveřejněné nabídky jednoho zemědělce, od nejnovějších */
+    public function offersOf(int $producerId, string $today): array
+    {
+        return $this->all('SELECT ' . self::OFFER_COLUMNS . ' ' . self::OFFER_FROM
+            . ' AND o.producer_user_id = ? ORDER BY o.created_at DESC, o.id DESC', [$today, $producerId]);
+    }
+
+    /** @return list<array<string, mixed>> zveřejněné poptávky jedné školy, od nejnovějších */
+    public function demandsOf(int $schoolId, string $today): array
+    {
+        return $this->all('SELECT ' . self::DEMAND_COLUMNS . ' ' . self::DEMAND_FROM
+            . ' AND d.school_user_id = ? ORDER BY d.created_at DESC, d.id DESC', [$today, $schoolId]);
+    }
+
     // --- společné -----------------------------------------------------------------------
 
     /**
@@ -156,6 +191,17 @@ final class MarketRepository
         $stmt->execute($params);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return is_array($row) ? $row : null;
+    }
+
+    /**
+     * @param list<mixed> $params
+     * @return list<array<string, mixed>>
+     */
+    private function all(string $sql, array $params): array
+    {
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /** Hledaný text jako vzor LIKE; znaky %, _ a ! se berou doslova. */

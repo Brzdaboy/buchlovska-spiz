@@ -189,6 +189,63 @@ final class MarketFlowTest extends DatabaseTestCase
         self::assertSame(404, $this->get('/poptavky/999999')->status);
     }
 
+    // --- profil člena ---------------------------------------------------------------------
+
+    public function testListingDetailLinksToMemberProfile(): void
+    {
+        $offer = $this->offer();
+        $demand = $this->demand();
+        self::assertStringContainsString('href="/zemedelci/' . $this->producer . '"', $this->get("/nabidky/{$offer}")->body);
+        self::assertStringContainsString('href="/skoly/' . $this->school . '"', $this->get("/poptavky/{$demand}")->body);
+    }
+
+    public function testProducerProfileShowsContactsIcoAndOnlyPublishedOffers(): void
+    {
+        $this->db()->exec("UPDATE producer_profiles SET company_id = '25596641' WHERE user_id = {$this->producer}");
+        $this->offer(['product_name' => 'Zveřejněné brambory']);
+        $this->offer(['product_name' => 'Ukončená mrkev', 'status' => 'ended']);
+        $this->offer(['product_name' => 'Vypršelé zelí', 'available_until' => self::day(-1)]);
+        $other = $this->producerWithProfile('Jiná farma', '600 000 002', 'jina@example.cz');
+        $this->insert('offers', $this->offerRow($other, ['product_name' => 'Cizí jablka']));
+
+        $response = $this->get("/zemedelci/{$this->producer}");
+        self::assertSame(200, $response->status);
+        $body = $response->body;
+        self::assertStringContainsString('Farma Pod Barborkou', $body);
+        self::assertStringContainsString('href="tel:+420600123456"', $body);
+        self::assertStringContainsString('mailto:farma@example.cz', $body);
+        self::assertStringContainsString('25596641', $body);
+        self::assertStringContainsString('Zveřejněné brambory', $body);
+        self::assertStringNotContainsString('Ukončená mrkev', $body);
+        self::assertStringNotContainsString('Vypršelé zelí', $body);
+        self::assertStringNotContainsString('Cizí jablka', $body);
+        self::assertSame(1, self::cards($response));
+    }
+
+    public function testSchoolProfileShowsDemands(): void
+    {
+        $this->demand(['product_name' => 'Hledáme jablka']);
+        $body = $this->get("/skoly/{$this->school}")->body;
+        self::assertStringContainsString('ZŠ a MŠ Buchlovice', $body);
+        self::assertStringContainsString('Hledáme jablka', $body);
+        self::assertStringContainsString('Aktuální poptávky', $body);
+        self::assertStringNotContainsString('IČO', $body, 'nevyplněné IČO se nezobrazí');
+    }
+
+    public function testMemberProfileIsHiddenWhenNotAvailable(): void
+    {
+        $admin = $this->createUser('admin');
+        $blocked = $this->producerWithProfile('Blokovaná farma', '600 000 003', 'blok2@example.cz');
+        $this->db()->exec("UPDATE users SET status = 'blocked' WHERE id = {$blocked}");
+        foreach (["/zemedelci/{$blocked}", "/skoly/{$this->producer}", "/zemedelci/{$this->school}", "/zemedelci/{$admin}", '/zemedelci/999999'] as $path) {
+            self::assertSame(404, $this->get($path)->status, $path);
+        }
+        AppFactory::$sessionData = [];
+        $response = $this->get("/zemedelci/{$this->producer}");
+        self::assertContains($response->status, [302, 303]);
+        self::assertStringNotContainsString('600 123 456', $response->body);
+    }
+
     // --- hledání a filtry ----------------------------------------------------------------
 
     public function testSearchByProductName(): void

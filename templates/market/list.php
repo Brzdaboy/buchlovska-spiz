@@ -6,9 +6,11 @@
  * @var \App\Domain\ListingType $type
  * @var list<array<string, mixed>> $items
  * @var string $view 'rows' | 'tiles'
+ * @var bool|null $hideOwner na profilu člena se autor neopakuje
  */
 $listIsOffer = $type->key === 'offer';
 $listClass = $view === 'tiles' ? 'market-tiles' : 'market-rows';
+$listShowOwner = !($hideOwner ?? false);
 ?>
 <ul class="<?= $listClass ?>">
     <?php foreach ($items as $listItem):
@@ -27,7 +29,7 @@ $listClass = $view === 'tiles' ? 'market-tiles' : 'market-rows';
             <div class="market-item-head">
                 <p class="market-item-category"><?= e($listItem['category_name']) ?></p>
                 <h3><a href="<?= e($listUrl) ?>"><?= e($listItem['product_name']) ?></a></h3>
-                <p class="market-item-owner"><?= e($listItem['owner_name']) ?> · <?= e($listItem['municipality']) ?></p>
+                <?php if ($listShowOwner): ?><p class="market-item-owner"><?= e($listItem['owner_name']) ?> · <?= e($listItem['municipality']) ?></p><?php endif; ?>
             </div>
             <div class="market-item-numbers">
                 <p class="market-item-main"><?= e($listMain) ?></p>

@@ -40,7 +40,8 @@ $phoneHref = preg_replace('/[^0-9+]/', '', (string) $item['phone']);
     </div>
     <aside class="card market-contact">
         <p class="eyebrow"><?= $isOffer ? 'Nabízí' : 'Poptává' ?></p>
-        <h2><?= e($item['owner_name']) ?></h2>
+        <h2><a href="/<?= $isOffer ? 'zemedelci' : 'skoly' ?>/<?= (int) ($isOffer ? $item['producer_user_id'] : $item['school_user_id']) ?>"><?= e($item['owner_name']) ?></a></h2>
+        <p class="member-link"><a href="/<?= $isOffer ? 'zemedelci' : 'skoly' ?>/<?= (int) ($isOffer ? $item['producer_user_id'] : $item['school_user_id']) ?>"><?= $isOffer ? 'Profil a všechny nabídky' : 'Profil a všechny poptávky' ?> <span aria-hidden="true">→</span></a></p>
         <dl class="contact-list">
             <dt>Kontaktní osoba</dt><dd><?= e($item['contact_name']) ?></dd>
             <dt>Telefon</dt><dd><a href="tel:<?= e($phoneHref) ?>"><?= e($item['phone']) ?></a></dd>
