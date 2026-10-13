@@ -17,9 +17,9 @@ $count = count($items);
 ?>
 <section class="page-hero compact">
     <div class="page-hero-inner wide">
-        <p class="eyebrow"><a href="/<?= e($type->segment()) ?>"><?= $isProducer ? 'Nabídky' : 'Poptávky' ?></a> · <?= $isProducer ? 'Zemědělec / producent' : 'Škola / školní jídelna' ?></p>
+        <?php $crumbs = [[$name, null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1><?= e($name) ?></h1>
-        <p class="lead"><?= e($member['municipality']) ?></p>
+        <p class="lead"><?= $isProducer ? 'Zemědělec / producent' : 'Škola / školní jídelna' ?> · <?= e($member['municipality']) ?></p>
     </div>
 </section>
 <div class="admin-content detail-grid member-profile">

@@ -1,6 +1,6 @@
 <section class="page-hero">
     <div class="page-hero-inner">
-        <p class="eyebrow">Jak získat přístup</p>
+        <?php $crumbs = [['Jak získat přístup', null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1>Registrace je jen na pozvánku</h1>
         <p class="lead">Buchlovská spíž je uzavřená pro zemědělce a školy z regionu. Účet nezaložíte sami. Pozvánku vám pošle správce platformy.</p>
     </div>

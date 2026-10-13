@@ -246,6 +246,21 @@ final class MarketFlowTest extends DatabaseTestCase
         self::assertStringNotContainsString('600 123 456', $response->body);
     }
 
+    public function testBreadcrumbsLeadHomeToPortal(): void
+    {
+        $offer = $this->offer(['product_name' => 'Brambory Adéla']);
+        $crumbs = static function (string $body): array {
+            preg_match('#<nav class="breadcrumbs".*?</nav>#s', $body, $m);
+            preg_match_all('#<li>(?:<a href="([^"]+)">|<span aria-current="page">)([^<]+)<#', $m[0] ?? '', $items, PREG_SET_ORDER);
+            return array_map(static fn (array $i): string => trim($i[2]) . ($i[1] !== '' ? ' → ' . $i[1] : ''), $items);
+        };
+        self::assertSame(['Domů → /portal', 'Nabídky → /nabidky', 'Brambory Adéla'], $crumbs($this->get("/nabidky/{$offer}")->body));
+        self::assertSame(['Domů → /portal', 'Poptávky'], $crumbs($this->get('/poptavky')->body));
+        self::assertSame(['Domů → /portal', 'Farma Pod Barborkou'], $crumbs($this->get("/zemedelci/{$this->producer}")->body));
+        AppFactory::$sessionData = [];
+        self::assertSame(['Domů → /', 'O projektu'], $crumbs($this->get('/o-projektu')->body), 'nepřihlášený jde na úvod');
+    }
+
     // --- hledání a filtry ----------------------------------------------------------------
 
     public function testSearchByProductName(): void

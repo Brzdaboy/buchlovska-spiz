@@ -10,7 +10,7 @@ $link = static fn (string $role, string $status): string => '/admin/uzivatele?' 
 ?>
 <section class="page-hero compact">
     <div class="page-hero-inner wide">
-        <p class="eyebrow">Administrace</p>
+        <?php $crumbs = [['Administrace', '/admin'], ['Uživatelé', null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1>Uživatelé</h1>
         <?php require __DIR__ . '/nav.php'; ?>
     </div>

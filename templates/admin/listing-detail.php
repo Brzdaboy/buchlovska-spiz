@@ -20,7 +20,7 @@ $actions = [
 ?>
 <section class="page-hero compact">
     <div class="page-hero-inner wide">
-        <p class="eyebrow"><a href="/admin/zaznamy">Záznamy</a> · <?= e($type->label()) ?></p>
+        <?php $crumbs = [['Administrace', '/admin'], ['Záznamy', '/admin/zaznamy'], [(string) $item['product_name'], null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1><?= e($item['product_name']) ?></h1>
         <?php require __DIR__ . '/nav.php'; ?>
     </div>

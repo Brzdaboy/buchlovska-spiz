@@ -1,7 +1,7 @@
 <?php /** @var string $message */ ?>
 <section class="page-hero">
     <div class="page-hero-inner">
-        <p class="eyebrow">Přihlášení</p>
+        <?php $crumbs = [['Přihlášení', null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1>Přihlášení se nepovedlo</h1>
         <p class="lead"><?= e($message) ?></p>
         <p class="hero-actions">

@@ -13,7 +13,7 @@ $badges = ['active' => 'badge-ok', 'ended' => 'badge-muted', 'expired' => 'badge
 ?>
 <section class="page-hero compact">
     <div class="page-hero-inner wide">
-        <p class="eyebrow">Administrace</p>
+        <?php $crumbs = [['Administrace', '/admin'], ['Záznamy', null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1>Záznamy</h1>
         <?php require __DIR__ . '/nav.php'; ?>
     </div>

@@ -27,7 +27,7 @@ $ownLink = $user['role'] === ($isOffer ? 'producer' : 'school')
 ?>
 <section class="page-hero compact">
     <div class="page-hero-inner wide">
-        <p class="eyebrow">Tržiště</p>
+        <?php $crumbs = [[$isOffer ? 'Nabídky' : 'Poptávky', null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1><?= $isOffer ? 'Nabídky zemědělců' : 'Poptávky škol' ?></h1>
         <p class="lead"><?= $isOffer
             ? 'Co nabízejí místní zemědělci a producenti. U každé nabídky najdete kontakt – domluvíte se napřímo.'

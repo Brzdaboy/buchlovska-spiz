@@ -12,7 +12,7 @@ $availability = $value('availability_type') ?: 'immediate';
 ?>
 <section class="page-hero compact">
     <div class="page-hero-inner wide">
-        <p class="eyebrow"><a href="/moje-nabidky">Moje nabídky</a></p>
+        <?php $crumbs = [['Moje nabídky', '/moje-nabidky'], [$isNew ? 'Nová nabídka' : (string) $offer['product_name'], null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1><?= $isNew ? 'Nová nabídka' : 'Upravit nabídku' ?></h1>
         <p class="lead">
             <?php if ($isNew): ?>

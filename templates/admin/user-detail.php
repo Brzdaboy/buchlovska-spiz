@@ -17,7 +17,7 @@ $action = static fn (string $path, string $label, string $class): string =>
 ?>
 <section class="page-hero compact">
     <div class="page-hero-inner wide">
-        <p class="eyebrow"><a href="/admin/uzivatele">Uživatelé</a> · <?= e($roles[$user['role']] ?? $user['role']) ?></p>
+        <?php $crumbs = [['Administrace', '/admin'], ['Uživatelé', '/admin/uzivatele'], [(string) ($user['organization'] ?? $user['email']), null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1><?= e($user['organization'] ?? $user['email']) ?></h1>
         <?php require __DIR__ . '/nav.php'; ?>
     </div>

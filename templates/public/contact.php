@@ -9,7 +9,7 @@ $hasContact = $operator['email'] !== '' || $operator['phone'] !== '';
 ?>
 <section class="page-hero">
     <div class="page-hero-inner">
-        <p class="eyebrow">Kontakt</p>
+        <?php $crumbs = [['Kontakt', null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1>Kontakt na provozovatele</h1>
         <p class="lead">Chcete se zapojit, potřebujete novou pozvánku nebo pomoc s účtem? Napište nebo zavolejte správci platformy.</p>
     </div>

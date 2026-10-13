@@ -14,7 +14,7 @@ $badges = [
 ?>
 <section class="page-hero compact">
     <div class="page-hero-inner wide">
-        <p class="eyebrow"><a href="/portal">Můj portál</a></p>
+        <?php $crumbs = [['Moje nabídky', null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1>Moje nabídky</h1>
         <p class="lead">Nabídky se zveřejňují hned. Ukončenou nebo vypršelou nabídku můžete kdykoli znovu zveřejnit.</p>
         <p><a class="button" href="/moje-nabidky/nova">Přidat nabídku <span aria-hidden="true">+</span></a></p>

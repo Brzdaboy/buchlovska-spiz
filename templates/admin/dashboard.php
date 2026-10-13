@@ -5,7 +5,7 @@
 ?>
 <section class="page-hero compact">
     <div class="page-hero-inner wide">
-        <p class="eyebrow">Administrace</p>
+        <?php $crumbs = [['Administrace', null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1>Správa Buchlovské spíže</h1>
         <?php require __DIR__ . '/nav.php'; ?>
     </div>

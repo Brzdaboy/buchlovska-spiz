@@ -4,7 +4,7 @@
 /** @var string|null $debugDetail */
 ?>
 <section class="page-section narrow">
-    <p class="eyebrow">Chyba <?= e($status) ?></p>
+    <?php $crumbs = [[$status === 404 ? 'Stránka nebyla nalezena' : 'Chyba ' . $status, null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
     <h1><?= e($status === 404 ? 'Stránka nebyla nalezena' : 'Tohle se nepovedlo') ?></h1>
     <p class="lead"><?= e($message) ?></p>
     <?php if (!empty($debugDetail)): ?>

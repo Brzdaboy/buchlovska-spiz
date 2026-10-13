@@ -9,7 +9,7 @@ $needsDate = ListingState::reactivationNeedsNewDate($offer['available_until'], t
 ?>
 <section class="page-hero compact">
     <div class="page-hero-inner wide">
-        <p class="eyebrow"><a href="/moje-nabidky">Moje nabídky</a></p>
+        <?php $crumbs = [['Moje nabídky', '/moje-nabidky'], ['Znovu zveřejnit: ' . $offer['product_name'], null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1>Znovu zveřejnit: <?= e($offer['product_name']) ?></h1>
         <p class="lead">Nabídka se zveřejní hned, bez schvalování.</p>
     </div>

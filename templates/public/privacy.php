@@ -8,7 +8,7 @@ $todo = static fn (string $text): string => '<mark class="todo">[' . e($text) . 
 ?>
 <section class="page-hero">
     <div class="page-hero-inner">
-        <p class="eyebrow">Právní informace</p>
+        <?php $crumbs = [['Ochrana osobních údajů', null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1>Zásady ochrany osobních údajů</h1>
         <p class="lead">Buchlovská spíž<br>
             Účinnost od: <?= $todo('DOPLNIT DATUM SPUŠTĚNÍ') ?><br>

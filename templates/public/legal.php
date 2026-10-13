@@ -7,7 +7,7 @@
 ?>
 <section class="page-hero">
     <div class="page-hero-inner">
-        <p class="eyebrow">Právní informace</p>
+        <?php $crumbs = [[$heading, null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1><?= e($heading) ?></h1>
     </div>
 </section>

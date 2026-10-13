@@ -1,6 +1,6 @@
 <section class="page-hero">
     <div class="page-hero-inner">
-        <p class="eyebrow">O projektu</p>
+        <?php $crumbs = [['O projektu', null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1>Místní potraviny pro školní kuchyně</h1>
         <p class="lead">Buchlovská spíž je uzavřená platforma, která propojuje zemědělce a producenty z mikroregionu Buchlov se školami a školními jídelnami.</p>
     </div>

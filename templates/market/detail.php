@@ -8,7 +8,7 @@ $phoneHref = preg_replace('/[^0-9+]/', '', (string) $item['phone']);
 ?>
 <section class="page-hero compact">
     <div class="page-hero-inner wide">
-        <p class="eyebrow"><a href="/<?= e($type->segment()) ?>"><?= $isOffer ? 'Nabídky' : 'Poptávky' ?></a> · <?= e($item['category_name']) ?></p>
+        <?php $crumbs = [[$isOffer ? 'Nabídky' : 'Poptávky', '/' . $type->segment()], [(string) $item['product_name'], null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1><?= e($item['product_name']) ?></h1>
         <?php if ($isOwn): ?>
             <p class="lead">Toto je vaše <?= $isOffer ? 'nabídka' : 'poptávka' ?>.
@@ -22,6 +22,7 @@ $phoneHref = preg_replace('/[^0-9+]/', '', (string) $item['phone']);
             <?php if ($isOffer): ?>
                 <p class="market-detail-price"><?= e(format_price((string) $item['unit_price'], (string) $item['price_unit'])) ?></p>
                 <dl class="contact-list">
+                    <dt>Kategorie</dt><dd><?= e($item['category_name']) ?></dd>
                     <dt>Množství</dt><dd><?= e(format_number((string) $item['available_quantity'])) ?>&nbsp;<?= e($item['quantity_unit']) ?></dd>
                     <dt>Dostupnost</dt><dd><?= $item['availability_type'] === 'immediate' ? 'ihned' : 'od ' . e(format_date($item['available_from'])) ?><?= $item['available_until'] !== null ? ', nabídka platí do ' . e(format_date($item['available_until'])) : '' ?></dd>
                     <dt>Doprava</dt><dd><?= nl2br(e($item['delivery_terms'])) ?></dd>
@@ -31,6 +32,7 @@ $phoneHref = preg_replace('/[^0-9+]/', '', (string) $item['phone']);
             <?php else: ?>
                 <p class="market-detail-price"><?= e(format_number((string) $item['requested_quantity'])) ?>&nbsp;<?= e($item['quantity_unit']) ?></p>
                 <dl class="contact-list">
+                    <dt>Kategorie</dt><dd><?= e($item['category_name']) ?></dd>
                     <dt>Potřeba v období</dt><dd><?= e(format_date($item['needed_from'])) ?> – <?= e(format_date($item['needed_until'])) ?></dd>
                     <?php if ($item['note'] !== null): ?><dt>Poznámka</dt><dd><?= nl2br(e($item['note'])) ?></dd><?php endif; ?>
                     <dt>Zveřejněno</dt><dd><?= e(format_datetime((string) $item['created_at'], 'j. n. Y')) ?><?= $item['content_updated_at'] > $item['created_at'] ? ', upraveno ' . e(format_datetime((string) $item['content_updated_at'], 'j. n. Y')) : '' ?></dd>

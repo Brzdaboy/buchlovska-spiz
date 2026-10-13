@@ -12,7 +12,7 @@ $records = $role === 'school' ? 'poptávek' : 'nabídek';
 ?>
 <section class="page-hero compact">
     <div class="page-hero-inner wide">
-        <p class="eyebrow"><?= e($role === 'school' ? 'Škola / školní jídelna' : 'Zemědělec / producent') ?></p>
+        <?php $crumbs = [[$isNew ? 'Dokončení profilu' : 'Můj profil', null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1><?= $isNew ? 'Dokončení profilu' : 'Můj profil' ?></h1>
         <p class="lead">
             <?php if ($isNew): ?>
