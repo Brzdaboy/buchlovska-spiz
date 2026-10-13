@@ -59,14 +59,6 @@ final class MarketRepository
             $where .= ' AND (o.available_until IS NULL OR o.available_until >= ?)';
             $params[] = $filter->from;
         }
-        if ($filter->priceUnitId !== null) {
-            $where .= ' AND o.price_unit_id = ?';
-            $params[] = $filter->priceUnitId;
-            if ($filter->maxPrice !== null) {
-                $where .= ' AND o.unit_price <= ?';
-                $params[] = $filter->maxPrice;
-            }
-        }
         return $this->page(self::OFFER_COLUMNS, self::OFFER_FROM . $where, $params, 'o', $filter->page);
     }
 

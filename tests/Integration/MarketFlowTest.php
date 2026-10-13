@@ -373,24 +373,14 @@ final class MarketFlowTest extends DatabaseTestCase
         self::assertStringContainsString('Zadejte datum.', $this->get('/nabidky', ['od' => '31. 2.'])->body);
     }
 
-    public function testPriceFilterNeedsUnit(): void
+    public function testPriceFilterNoLongerExists(): void
     {
-        $this->offer(['product_name' => 'Levné kg', 'unit_price' => '14.50']);
-        $this->offer(['product_name' => 'Drahé kg', 'unit_price' => '22.00']);
-        $this->offer(['product_name' => 'Za kus', 'unit_price' => '5.00', 'price_unit_id' => $this->idOf('units', 'code', 'ks')]);
-
-        $noUnit = $this->get('/nabidky', ['cena_do' => '15']);
-        self::assertSame(3, self::cards($noUnit), 'bez jednotky se cena nepoužije');
-        self::assertStringContainsString('Cenu lze porovnat jen u stejné jednotky.', $noUnit->body);
-
-        $kg = $this->get('/nabidky', ['cena_do' => '15', 'jednotka' => 'kg'])->body;
-        self::assertStringContainsString('Levné kg', $kg);
-        self::assertStringNotContainsString('Drahé kg', $kg);
-        self::assertStringNotContainsString('Za kus', $kg);
-
-        self::assertSame(2, self::cards($this->get('/nabidky', ['jednotka' => 'kg'])), 'jednotka sama filtruje cenovou jednotku');
-        self::assertSame(1, self::cards($this->get('/nabidky', ['cena_do' => '14,50', 'jednotka' => 'kg'])));
-        self::assertStringContainsString('Zadejte cenu v Kč', $this->get('/nabidky', ['cena_do' => 'levně', 'jednotka' => 'kg'])->body);
+        $this->offer(['product_name' => 'Levné', 'unit_price' => '10.00']);
+        $this->offer(['product_name' => 'Drahé', 'unit_price' => '200.00']);
+        $response = $this->get('/nabidky', ['cena_do' => '15', 'jednotka' => 'kg']);
+        self::assertSame(2, self::cards($response), 'parametry ceny se ignorují');
+        self::assertStringNotContainsString('Cena nejvýš', $response->body);
+        self::assertStringNotContainsString('name="cena_do"', $response->body);
     }
 
     public function testRowsByDefaultTilesOnRequestAndRemembered(): void
@@ -417,10 +407,10 @@ final class MarketFlowTest extends DatabaseTestCase
         self::assertStringContainsString('<details class="market-more">', $this->get('/nabidky')->body);
         self::assertStringContainsString('<details class="market-more">', $this->get('/nabidky', ['q' => 'brambory'])->body, 'samotné hledání panel neotevírá');
 
-        $filtered = $this->get('/nabidky', ['kategorie' => 'zelenina', 'od' => self::day(1), 'jednotka' => 'kg'])->body;
+        $filtered = $this->get('/nabidky', ['kategorie' => 'zelenina', 'od' => self::day(1)])->body;
         self::assertStringContainsString('<details class="market-more" open>', $filtered);
-        self::assertStringContainsString('class="filter-count" aria-label="aktivní: 3">3</span>', $filtered);
-        self::assertStringContainsString('<details class="market-more" open>', $this->get('/nabidky', ['cena_do' => '10'])->body, 'chyba ve filtru je vidět');
+        self::assertStringContainsString('class="filter-count" aria-label="aktivní: 2">2</span>', $filtered);
+        self::assertStringContainsString('<details class="market-more" open>', $this->get('/nabidky', ['od' => '31. 2.'])->body, 'chyba ve filtru je vidět');
     }
 
     // --- řazení a stránkování -------------------------------------------------------------
@@ -449,8 +439,8 @@ final class MarketFlowTest extends DatabaseTestCase
         for ($i = 1; $i <= 13; $i++) {
             $this->offer(['product_name' => "Jablko {$i}"]);
         }
-        $body = $this->get('/nabidky', ['q' => 'jablko', 'cena_do' => '20', 'jednotka' => 'kg'])->body;
-        self::assertStringContainsString('href="/nabidky?q=jablko&amp;jednotka=kg&amp;cena_do=20&amp;strana=2"', $body);
+        $body = $this->get('/nabidky', ['q' => 'jablko', 'kategorie' => 'zelenina'])->body;
+        self::assertStringContainsString('href="/nabidky?q=jablko&amp;kategorie=zelenina&amp;strana=2"', $body);
     }
 
     // --- bezpečný výstup ------------------------------------------------------------------

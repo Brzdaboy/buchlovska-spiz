@@ -11,10 +11,11 @@ Při rozporu mají tato rozhodnutí přednost před `SPECIFIKACE.md`.
 3. **Přehled pro admina:** nové a upravené záznamy od jeho poslední návštěvy. Bez e-mailů.
 4. **Smazání autorem je měkké** (`deleted_at`). Záznam zmizí všem, v DB zůstane pro audit.
 5. **Reaktivace s prošlým datem** vyžaduje nové budoucí datum. Proběhne okamžitě, bez schválení.
-6. **Cenový filtr** jde použít jen spolu s vybranou cenovou jednotkou.
+6. ~~**Cenový filtr** jde použít jen spolu s vybranou cenovou jednotkou.~~ Zrušeno rozhodnutím č. 10.
 7. **Jediný stav ručního ukončení:** „Ukončeno“. Žádné koncepty.
 8. **Číselníky bez správy v administraci.** Kategorie a jednotky jsou pevný seznam z migrace (mění §2, §8 a §9: „spravovaný administrátorem“ neplatí). Změna seznamu = nová SQL migrace.
 9. **Tržiště bez fotografií.** Nabídky ani poptávky nemají v seznamu ani v detailu žádný obrázek (mění §8 a §16 – „jednotná univerzální fotografie“). Seznam má dvě zobrazení: řádky (výchozí) a dlaždice; volbu si web pamatuje v session.
+10. **Bez cenového filtru (13. 10. 2026).** Tržiště nefiltruje podle ceny; filtry jsou jen kategorie a období (mění §11 „filtrování … podle ceny nabídky“). Hledání v názvu ignoruje diakritiku a velikost písmen.
 
 ### Stavy nabídky i poptávky
 

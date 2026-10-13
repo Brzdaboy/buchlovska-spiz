@@ -4,7 +4,6 @@
 /** @var \App\Service\MarketFilter $filter */
 /** @var array{items: list<array<string, mixed>>, total: int, page: int, pages: int} $result */
 /** @var list<array{id: int, name: string, slug: string}> $categories */
-/** @var array<int, string> $units */
 /** @var string $view 'rows' | 'tiles' */
 $isOffer = $type->key === 'offer';
 $base = '/' . $type->segment();
@@ -54,7 +53,7 @@ $ownLink = $user['role'] === ($isOffer ? 'producer' : 'school')
                 Filtry<?php if ($extra > 0): ?> <span class="filter-count" aria-label="aktivní: <?= $extra ?>"><?= $extra ?></span><?php endif; ?>
             </summary>
             <div class="market-filter-panel">
-                <div class="market-filter-grid<?= $isOffer ? ' with-price' : '' ?>">
+                <div class="market-filter-grid">
                     <div class="field">
                         <label for="m-kategorie">Kategorie</label>
                         <select id="m-kategorie" name="kategorie">
@@ -75,24 +74,6 @@ $ownLink = $user['role'] === ($isOffer ? 'producer' : 'school')
                         </div>
                         <?= $errorText('od') . $errorText('do') ?>
                     </div>
-                    <?php if ($isOffer): ?>
-                        <div class="field field-price<?= isset($errors['cena_do']) ? ' has-error' : '' ?>" role="group" aria-labelledby="m-price-label">
-                            <span class="filter-label" id="m-price-label">Cena nejvýš</span>
-                            <div class="price-inputs">
-                                <label class="visually-hidden" for="m-cena">Cena v Kč</label>
-                                <input id="m-cena" name="cena_do" inputmode="decimal" value="<?= e($in['cena_do']) ?>" placeholder="Kč"<?= $aria('cena_do') ?>>
-                                <span aria-hidden="true">Kč /</span>
-                                <label class="visually-hidden" for="m-jednotka">za jednotku</label>
-                                <select id="m-jednotka" name="jednotka">
-                                    <option value="">jednotka</option>
-                                    <?php foreach ($units as $code): ?>
-                                        <option value="<?= e($code) ?>"<?= $code === $in['jednotka'] ? ' selected' : '' ?>><?= e($code) ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                            <?= $errorText('cena_do') ?>
-                        </div>
-                    <?php endif; ?>
                 </div>
                 <div class="market-filter-actions">
                     <button class="button" type="submit">Použít filtry</button>

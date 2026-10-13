@@ -378,14 +378,11 @@ ul { padding-left: 1.2em; }
 .filter-count { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px; background: var(--green); color: #fff; font-size: 12px; line-height: 1; }
 .market-filter-panel { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); }
 .market-filter-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 16px 18px; align-items: start; }
-.market-filter-grid.with-price { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1.2fr); }
 .market-filter .field > label, .market-filter .filter-label { font-weight: 700; font-size: 14px; line-height: 1.6; }
 .market-filter .field input, .market-filter .field select { width: 100%; min-width: 0; height: 48px; min-height: 48px; }
-.period-inputs, .price-inputs { display: flex; align-items: center; gap: 8px; }
+.period-inputs { display: flex; align-items: center; gap: 8px; }
 .period-inputs input { flex: 1 1 0; min-width: 0; }
-.price-inputs input { flex: 1 1 70px; min-width: 0; }
-.price-inputs select { flex: 0 0 104px; width: 104px !important; }
-.period-inputs span, .price-inputs span { color: var(--muted); font-weight: 400; white-space: nowrap; }
+.period-inputs span { color: var(--muted); font-weight: 400; white-space: nowrap; }
 .market-filter-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
 .market-count { color: var(--muted); margin: 8px 0 16px; }
 .market-count strong { color: var(--ink); }
@@ -414,9 +411,6 @@ ul { padding-left: 1.2em; }
 .section-head a { color: var(--green); font-weight: 700; }
 .dashboard .admin-links { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 
-@media (max-width: 1000px) {
-  .market-filter-grid.with-price { grid-template-columns: 1fr 1fr; }
-}
 @media (max-width: 560px) {
   .market-filter { padding: 16px; }
   .market-search { margin-right: 112px; gap: 8px; }
@@ -426,7 +420,7 @@ ul { padding-left: 1.2em; }
   .market-more > summary svg { display: none; }
 }
 @media (max-width: 640px) {
-  .market-filter-grid, .market-filter-grid.with-price { grid-template-columns: 1fr; }
+  .market-filter-grid { grid-template-columns: 1fr; }
 }
 .dashboard .contact-list + p { margin-top: 18px; }
 

@@ -49,8 +49,7 @@ final class MarketController
         $user = $this->app->auth()->requireActive();
         $catalog = new CatalogRepository($this->app->db->pdo());
         $isOffer = $type->key === 'offer';
-        $units = $catalog->activeUnits();
-        $filter = MarketFilter::fromQuery($request->query, $catalog->activeCategoryOptions(), $units, $isOffer);
+        $filter = MarketFilter::fromQuery($request->query, $catalog->activeCategoryOptions());
         $result = $isOffer ? $this->market()->offers($filter, today()) : $this->market()->demands($filter, today());
         $view = $this->view($request);
 
@@ -61,7 +60,6 @@ final class MarketController
             'filter' => $filter->withPage($result['page']),
             'result' => $result,
             'categories' => $catalog->activeCategoryOptions(),
-            'units' => $units,
             'view' => $view,
         ]));
     }
