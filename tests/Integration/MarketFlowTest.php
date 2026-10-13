@@ -390,15 +390,17 @@ final class MarketFlowTest extends DatabaseTestCase
         self::assertSame(['Levná za kus', 'Střední', 'Drahá'], $order($this->get('/nabidky')->body), 'řazení se nepamatuje');
 
         $body = $this->get('/nabidky', ['razeni' => 'nejdrazsi', 'q' => 'a'])->body;
-        self::assertStringContainsString('<option value="nejdrazsi" selected>Nejdražší</option>', $body);
-        self::assertStringContainsString('<input type="hidden" name="q" value="a">', $body, 'řazení drží hledání');
+        self::assertStringContainsString('<span id="sort-current">Nejdražší</span>', $body);
+        self::assertStringContainsString('aria-current="true">Nejdražší</a>', $body);
+        self::assertStringContainsString('href="/nabidky?q=a&amp;razeni=nejlevnejsi">Nejlevnější</a>', $body, 'řazení drží hledání');
+        self::assertStringContainsString('href="/nabidky?q=a">Nejnovější</a>', $body);
         self::assertStringContainsString('2 nabídky', $body, 'q=a najde Drahá a Levná za kus');
         self::assertStringContainsString('zobrazeni=dlazdice', $body);
         self::assertStringContainsString('razeni=nejdrazsi&amp;zobrazeni=dlazdice', $body, 'přepnutí zobrazení drží řazení');
 
         $this->demand();
         $demands = $this->get('/poptavky')->body;
-        self::assertStringNotContainsString('name="razeni"', $demands, 'poptávky řazení nemají');
+        self::assertStringNotContainsString('class="sort"', $demands, 'poptávky řazení nemají');
         self::assertStringContainsString('1 poptávka', $demands);
     }
 

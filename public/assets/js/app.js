@@ -35,13 +35,18 @@
   });
 })();
 
-/* Řazení: změna výběru odešle formulář hned; tlačítko „Seřadit“ je jen záloha bez JavaScriptu. */
+/* Rozbalovací menu (details.dropdown): zavřít klikem mimo nebo klávesou Esc. */
 (function () {
   'use strict';
-  document.querySelectorAll('select[data-autosubmit]').forEach(function (select) {
-    var form = select.form;
-    var button = form && form.querySelector('[data-autosubmit-button]');
-    if (button) button.hidden = true;
-    select.addEventListener('change', function () { if (form) form.submit(); });
+  var menus = document.querySelectorAll('details[data-dropdown]');
+  if (!menus.length) return;
+  document.addEventListener('click', function (event) {
+    menus.forEach(function (menu) { if (menu.open && !menu.contains(event.target)) menu.open = false; });
+  });
+  document.addEventListener('keydown', function (event) {
+    if (event.key !== 'Escape') return;
+    menus.forEach(function (menu) {
+      if (menu.open) { menu.open = false; menu.querySelector('summary').focus(); }
+    });
   });
 })();

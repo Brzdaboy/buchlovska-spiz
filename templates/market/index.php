@@ -90,19 +90,26 @@ $ownLink = $user['role'] === ($isOffer ? 'producer' : 'school')
     ?>
     <div class="market-toolbar">
     <div class="market-toolbar-left">
-        <?php if ($isOffer): ?>
-            <form class="sort-form" method="get" action="<?= e($base) ?>">
-                <?php foreach ($filter->filterParams() as $sortParam => $sortValue): ?>
-                    <input type="hidden" name="<?= e($sortParam) ?>" value="<?= e($sortValue) ?>">
-                <?php endforeach; ?>
-                <label for="m-razeni">Řadit:</label>
-                <select id="m-razeni" name="razeni" data-autosubmit>
-                    <?php foreach (\App\Service\MarketFilter::SORTS as $sortKey => $sortLabel): ?>
-                        <option value="<?= e($sortKey) ?>"<?= $sortKey === $filter->sort ? ' selected' : '' ?>><?= e($sortLabel) ?></option>
-                    <?php endforeach; ?>
-                </select>
-                <button class="button small secondary" type="submit" data-autosubmit-button>Seřadit</button>
-            </form>
+        <?php if ($isOffer):
+            $sortLabels = \App\Service\MarketFilter::SORTS;
+            $sortLink = static function (string $key) use ($base, $filter): string {
+                $params = $filter->filterParams() + ($key === '' ? [] : ['razeni' => $key]);
+                return $base . ($params === [] ? '' : '?' . http_build_query($params));
+            };
+            ?>
+            <div class="sort">
+                <span class="sort-label" id="sort-label">Řadit:</span>
+                <details class="dropdown" data-dropdown>
+                    <summary aria-labelledby="sort-label sort-current"><span id="sort-current"><?= e($sortLabels[$filter->sort]) ?></span>
+                        <svg class="chevron" aria-hidden="true" viewBox="0 0 24 24" width="16" height="16"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </summary>
+                    <ul class="dropdown-menu">
+                        <?php foreach ($sortLabels as $sortKey => $sortLabel): ?>
+                            <li><a href="<?= e($sortLink($sortKey)) ?>"<?= $sortKey === $filter->sort ? ' aria-current="true"' : '' ?>><?= e($sortLabel) ?></a></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </details>
+            </div>
         <?php endif; ?>
         <p class="market-count" role="status"><?= $count ?> <?= $noun ?><?= $result['pages'] > 1 ? ' · strana ' . $result['page'] . ' z ' . $result['pages'] : '' ?>
             <?php if ($filter->isActive() || $errors !== []): ?> · <a href="<?= e($base) ?>">Zrušit hledání a filtry</a><?php endif; ?></p>
