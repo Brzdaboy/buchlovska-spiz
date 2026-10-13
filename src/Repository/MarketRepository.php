@@ -43,7 +43,7 @@ final class MarketRepository
         $where = '';
         $params = [$today];
         if ($filter->q !== '') {
-            $where .= " AND o.product_name LIKE ? ESCAPE '!'";
+            $where .= " AND o.product_name COLLATE utf8mb4_unicode_ci LIKE ? ESCAPE '!'";
             $params[] = self::like($filter->q);
         }
         if ($filter->categoryId !== null) {
@@ -97,7 +97,7 @@ final class MarketRepository
         $where = '';
         $params = [$today];
         if ($filter->q !== '') {
-            $where .= " AND d.product_name LIKE ? ESCAPE '!'";
+            $where .= " AND d.product_name COLLATE utf8mb4_unicode_ci LIKE ? ESCAPE '!'";
             $params[] = self::like($filter->q);
         }
         if ($filter->categoryId !== null) {
@@ -204,7 +204,12 @@ final class MarketRepository
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /** Hledaný text jako vzor LIKE; znaky %, _ a ! se berou doslova. */
+    /**
+     * Hledaný text jako vzor LIKE; znaky %, _ a ! se berou doslova.
+     * Porovnání běží v utf8mb4_unicode_ci (bez ohledu na diakritiku a velikost písmen):
+     * „cervena paprika“ najde „Červená paprika“ i naopak. Česká collation sloupce
+     * by č a c rozlišovala.
+     */
     private static function like(string $text): string
     {
         return '%' . strtr($text, ['!' => '!!', '%' => '!%', '_' => '!_']) . '%';

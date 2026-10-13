@@ -300,6 +300,18 @@ final class MarketFlowTest extends DatabaseTestCase
         self::assertStringContainsString('Nic jsme nenašli', $none->body);
     }
 
+    public function testSearchIgnoresDiacriticsAndCase(): void
+    {
+        $this->offer(['product_name' => 'Červená paprika']);
+        $this->offer(['product_name' => 'Zelí hlávkové']);
+        $this->offer(['product_name' => 'cervena repa']);
+        foreach (['cervena paprika' => 1, 'ČERVENÁ' => 2, 'zeli' => 1, 'Zelí' => 1, 'řepa' => 1, 'hlavkove' => 1, 'paprikа' => 0] as $q => $expected) {
+            self::assertSame($expected, self::cards($this->get('/nabidky', ['q' => $q])), "hledání „{$q}“");
+        }
+        $this->demand(['product_name' => 'Šťavnatá jablka']);
+        self::assertSame(1, self::cards($this->get('/poptavky', ['q' => 'stavnata'])));
+    }
+
     public function testCategoryFilter(): void
     {
         $this->offer(['product_name' => 'Brambory']);
