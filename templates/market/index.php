@@ -89,8 +89,24 @@ $ownLink = $user['role'] === ($isOffer ? 'producer' : 'school')
     };
     ?>
     <div class="market-toolbar">
-    <p class="market-count" role="status"><?= $filter->isActive() ? 'Nalezeno' : 'Celkem' ?> <strong><?= $count ?></strong> <?= $noun ?><?= $result['pages'] > 1 ? ' · strana ' . $result['page'] . ' z ' . $result['pages'] : '' ?>
-        <?php if ($filter->isActive() || $errors !== []): ?> · <a href="<?= e($base) ?>">Zrušit hledání a filtry</a><?php endif; ?></p>
+    <div class="market-toolbar-left">
+        <?php if ($isOffer): ?>
+            <form class="sort-form" method="get" action="<?= e($base) ?>">
+                <?php foreach ($filter->filterParams() as $sortParam => $sortValue): ?>
+                    <input type="hidden" name="<?= e($sortParam) ?>" value="<?= e($sortValue) ?>">
+                <?php endforeach; ?>
+                <label for="m-razeni">Řadit:</label>
+                <select id="m-razeni" name="razeni" data-autosubmit>
+                    <?php foreach (\App\Service\MarketFilter::SORTS as $sortKey => $sortLabel): ?>
+                        <option value="<?= e($sortKey) ?>"<?= $sortKey === $filter->sort ? ' selected' : '' ?>><?= e($sortLabel) ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <button class="button small secondary" type="submit" data-autosubmit-button>Seřadit</button>
+            </form>
+        <?php endif; ?>
+        <p class="market-count" role="status"><?= $count ?> <?= $noun ?><?= $result['pages'] > 1 ? ' · strana ' . $result['page'] . ' z ' . $result['pages'] : '' ?>
+            <?php if ($filter->isActive() || $errors !== []): ?> · <a href="<?= e($base) ?>">Zrušit hledání a filtry</a><?php endif; ?></p>
+    </div>
     <nav class="view-switch" aria-label="Zobrazení">
         <a href="<?= e($viewLink('radky')) ?>"<?= $view === 'rows' ? ' aria-current="true"' : '' ?>>
             <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>

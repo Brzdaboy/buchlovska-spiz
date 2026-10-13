@@ -28,6 +28,7 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
 body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.6 var(--sans); }
@@ -538,3 +539,10 @@ mark.todo { background: #fff1b8; color: #6b5310; padding: 0 4px; border-radius: 
 .breadcrumbs a { color: var(--green-2); font-weight: 700; text-decoration: none; }
 .breadcrumbs a:hover { text-decoration: underline; }
 .breadcrumbs [aria-current="page"] { color: var(--muted); max-width: 40ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Řazení nabídek vedle počtu */
+.market-toolbar-left { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; }
+.sort-form { display: flex; align-items: center; gap: 8px; margin: 0; }
+.sort-form label { font-size: 14px; font-weight: 700; }
+.sort-form select { height: 40px; border: 1px solid #c9d2c6; border-radius: 999px; padding: 0 34px 0 14px; background: #fff; font: inherit; font-size: 14px; font-weight: 700; color: var(--ink); }
+.market-toolbar-left .market-count { font-size: 14px; }

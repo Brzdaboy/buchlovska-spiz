@@ -373,6 +373,45 @@ final class MarketFlowTest extends DatabaseTestCase
         self::assertStringContainsString('Zadejte datum.', $this->get('/nabidky', ['od' => '31. 2.'])->body);
     }
 
+    public function testOffersSortByPriceNewestByDefault(): void
+    {
+        $this->offer(['product_name' => 'Střední', 'unit_price' => '20.00', 'created_at' => '2026-10-01 10:00:00']);
+        $this->offer(['product_name' => 'Drahá', 'unit_price' => '200.00', 'created_at' => '2026-10-01 09:00:00']);
+        $this->offer(['product_name' => 'Levná za kus', 'unit_price' => '5.50', 'created_at' => '2026-10-01 11:00:00',
+            'price_unit_id' => $this->idOf('units', 'code', 'ks')]);
+        $order = static function (string $body): array {
+            preg_match_all('#<h3><a href="/nabidky/\d+">([^<]+)</a></h3>#', $body, $m);
+            return $m[1];
+        };
+        self::assertSame(['Levná za kus', 'Střední', 'Drahá'], $order($this->get('/nabidky')->body), 'výchozí od nejnovějších');
+        self::assertSame(['Levná za kus', 'Střední', 'Drahá'], $order($this->get('/nabidky', ['razeni' => 'nejlevnejsi'])->body));
+        self::assertSame(['Drahá', 'Střední', 'Levná za kus'], $order($this->get('/nabidky', ['razeni' => 'nejdrazsi'])->body));
+        self::assertSame(['Levná za kus', 'Střední', 'Drahá'], $order($this->get('/nabidky', ['razeni' => 'blbost'])->body));
+        self::assertSame(['Levná za kus', 'Střední', 'Drahá'], $order($this->get('/nabidky')->body), 'řazení se nepamatuje');
+
+        $body = $this->get('/nabidky', ['razeni' => 'nejdrazsi', 'q' => 'a'])->body;
+        self::assertStringContainsString('<option value="nejdrazsi" selected>Nejdražší</option>', $body);
+        self::assertStringContainsString('<input type="hidden" name="q" value="a">', $body, 'řazení drží hledání');
+        self::assertStringContainsString('2 nabídky', $body, 'q=a najde Drahá a Levná za kus');
+        self::assertStringContainsString('zobrazeni=dlazdice', $body);
+        self::assertStringContainsString('razeni=nejdrazsi&amp;zobrazeni=dlazdice', $body, 'přepnutí zobrazení drží řazení');
+
+        $this->demand();
+        $demands = $this->get('/poptavky')->body;
+        self::assertStringNotContainsString('name="razeni"', $demands, 'poptávky řazení nemají');
+        self::assertStringContainsString('1 poptávka', $demands);
+    }
+
+    public function testSortIsKeptInPagination(): void
+    {
+        for ($i = 1; $i <= 13; $i++) {
+            $this->offer(['product_name' => "Produkt {$i}", 'unit_price' => (string) (10 + $i)]);
+        }
+        $body = $this->get('/nabidky', ['razeni' => 'nejlevnejsi'])->body;
+        self::assertStringContainsString('href="/nabidky?razeni=nejlevnejsi&amp;strana=2"', $body);
+        self::assertStringContainsString('Produkt 13', $this->get('/nabidky', ['razeni' => 'nejlevnejsi', 'strana' => '2'])->body);
+    }
+
     public function testPriceFilterNoLongerExists(): void
     {
         $this->offer(['product_name' => 'Levné', 'unit_price' => '10.00']);

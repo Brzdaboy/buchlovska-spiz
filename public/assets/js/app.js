@@ -34,3 +34,14 @@
     start();
   });
 })();
+
+/* Řazení: změna výběru odešle formulář hned; tlačítko „Seřadit“ je jen záloha bez JavaScriptu. */
+(function () {
+  'use strict';
+  document.querySelectorAll('select[data-autosubmit]').forEach(function (select) {
+    var form = select.form;
+    var button = form && form.querySelector('[data-autosubmit-button]');
+    if (button) button.hidden = true;
+    select.addEventListener('change', function () { if (form) form.submit(); });
+  });
+})();

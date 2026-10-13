@@ -16,6 +16,7 @@ Při rozporu mají tato rozhodnutí přednost před `SPECIFIKACE.md`.
 8. **Číselníky bez správy v administraci.** Kategorie a jednotky jsou pevný seznam z migrace (mění §2, §8 a §9: „spravovaný administrátorem“ neplatí). Změna seznamu = nová SQL migrace.
 9. **Tržiště bez fotografií.** Nabídky ani poptávky nemají v seznamu ani v detailu žádný obrázek (mění §8 a §16 – „jednotná univerzální fotografie“). Seznam má dvě zobrazení: řádky (výchozí) a dlaždice; volbu si web pamatuje v session.
 10. **Bez cenového filtru (13. 10. 2026).** Tržiště nefiltruje podle ceny; filtry jsou jen kategorie a období (mění §11 „filtrování … podle ceny nabídky“). Hledání v názvu ignoruje diakritiku a velikost písmen.
+11. **Řazení nabídek (13. 10. 2026):** Nejnovější (výchozí) / Nejlevnější / Nejdražší podle částky bez ohledu na jednotku; volba se nepamatuje. Poptávky řazení nemají (jen od nejnovějších).
 
 ### Stavy nabídky i poptávky
 

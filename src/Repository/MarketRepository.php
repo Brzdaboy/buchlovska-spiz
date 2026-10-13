@@ -59,7 +59,13 @@ final class MarketRepository
             $where .= ' AND (o.available_until IS NULL OR o.available_until >= ?)';
             $params[] = $filter->from;
         }
-        return $this->page(self::OFFER_COLUMNS, self::OFFER_FROM . $where, $params, 'o', $filter->page);
+        // Řazení podle částky bez ohledu na jednotku (ROZHODNUTI č. 11); shoda ceny -> novější dřív.
+        $order = match ($filter->sort) {
+            'nejlevnejsi' => 'o.unit_price ASC, o.created_at DESC, o.id DESC',
+            'nejdrazsi' => 'o.unit_price DESC, o.created_at DESC, o.id DESC',
+            default => 'o.created_at DESC, o.id DESC',
+        };
+        return $this->page(self::OFFER_COLUMNS, self::OFFER_FROM . $where, $params, $order, $filter->page);
     }
 
     /** @return array<string, mixed>|null */
@@ -104,7 +110,7 @@ final class MarketRepository
             $where .= ' AND d.needed_until >= ?';
             $params[] = $filter->from;
         }
-        return $this->page(self::DEMAND_COLUMNS, self::DEMAND_FROM . $where, $params, 'd', $filter->page);
+        return $this->page(self::DEMAND_COLUMNS, self::DEMAND_FROM . $where, $params, 'd.created_at DESC, d.id DESC', $filter->page);
     }
 
     /** @return array<string, mixed>|null */
@@ -156,7 +162,7 @@ final class MarketRepository
      * @param list<mixed> $params
      * @return array{items: list<array<string, mixed>>, total: int, page: int, pages: int}
      */
-    private function page(string $columns, string $from, array $params, string $alias, int $page, int $perPage = MarketFilter::PER_PAGE): array
+    private function page(string $columns, string $from, array $params, string $orderBy, int $page, int $perPage = MarketFilter::PER_PAGE): array
     {
         $count = $this->pdo->prepare('SELECT COUNT(*) ' . $from);
         $count->execute($params);
@@ -166,7 +172,7 @@ final class MarketRepository
 
         $offset = ($page - 1) * $perPage;
         $stmt = $this->pdo->prepare(
-            "SELECT {$columns} {$from} ORDER BY {$alias}.created_at DESC, {$alias}.id DESC LIMIT "
+            "SELECT {$columns} {$from} ORDER BY {$orderBy} LIMIT "
             . $perPage . ' OFFSET ' . $offset
         );
         $stmt->execute($params);
