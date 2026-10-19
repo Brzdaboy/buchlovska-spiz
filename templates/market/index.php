@@ -20,9 +20,6 @@ $count = $result['total'];
 $noun = $isOffer
     ? ($count === 1 ? 'nabídka' : ($count >= 2 && $count <= 4 ? 'nabídky' : 'nabídek'))
     : ($count === 1 ? 'poptávka' : ($count >= 2 && $count <= 4 ? 'poptávky' : 'poptávek'));
-$ownLink = $user['role'] === ($isOffer ? 'producer' : 'school')
-    ? ($isOffer ? ['/portal', 'Moje nabídky'] : ['/portal', 'Moje poptávky'])
-    : null;
 ?>
 <section class="page-hero compact">
     <div class="page-hero-inner wide">
@@ -31,9 +28,6 @@ $ownLink = $user['role'] === ($isOffer ? 'producer' : 'school')
         <p class="lead"><?= $isOffer
             ? 'Co nabízejí místní zemědělci a producenti. U každé nabídky najdete kontakt – domluvíte se napřímo.'
             : 'Co shánějí školy a školní jídelny. U každé poptávky najdete kontakt na školu – domluvíte se napřímo.' ?></p>
-        <?php if ($ownLink !== null): ?>
-            <p><a class="button secondary small" href="<?= e($ownLink[0]) ?>"><?= e($ownLink[1]) ?></a></p>
-        <?php endif; ?>
     </div>
 </section>
 <div class="admin-content market">
