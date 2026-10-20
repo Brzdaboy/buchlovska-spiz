@@ -326,6 +326,8 @@ ul { padding-left: 1.2em; }
 }
 .field.has-error .checkbox { color: var(--danger); }
 .radio-row { display: flex; flex-wrap: wrap; gap: 8px 24px; }
+/* Nabídka: datum „Dostupné od“ jen při volbě „Od data“. */
+.availability:has(input[name="availability_type"][value="immediate"]:checked) .availability-from { display: none; }
 .profile-form fieldset > .field + .form-grid, .profile-form fieldset > .form-grid + .field { margin-top: 18px; }
 .profile-form legend + .field .radio-row { padding-top: 2px; }
 .profile-form fieldset > .field + .field { margin-top: 14px; }

@@ -44,7 +44,7 @@ $availability = $value('availability_type') ?: 'immediate';
             </div>
         </fieldset>
 
-        <fieldset>
+        <fieldset class="availability">
             <legend>Dostupnost</legend>
             <?php [$availabilityFeedback, $availabilityAria] = $feedback('f-availability_type', 'availability_type', null); ?>
             <div class="field<?= isset($errors['availability_type']) ? ' has-error' : '' ?>" role="radiogroup" aria-label="Dostupnost"<?= $availabilityAria ?>>
@@ -54,8 +54,9 @@ $availability = $value('availability_type') ?: 'immediate';
                 </div>
                 <?= $availabilityFeedback ?>
             </div>
-            <div class="form-grid">
-                <?= $input('available_from', 'Dostupné od', ['type' => 'date', 'required' => false, 'hint' => 'Vyplňte jen při volbě „Od data“.']) ?>
+            <div class="form-grid pairs">
+                <?php /* Pole „Dostupné od“ je povinné jen při „Od data“; při „Ihned“ ho schová CSS (:has) a server hodnotu zahodí. */ ?>
+                <div class="availability-from"><?= $input('available_from', 'Dostupné od', ['type' => 'date']) ?></div>
                 <?= $input('available_until', 'Nabídka platí do', ['type' => 'date', 'required' => false, 'min' => $today, 'hint' => 'Bez data platí do ručního ukončení.']) ?>
             </div>
         </fieldset>
