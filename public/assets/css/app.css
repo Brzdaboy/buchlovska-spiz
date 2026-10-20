@@ -569,7 +569,6 @@ mark.todo { background: #fff1b8; color: #6b5310; padding: 0 4px; border-radius: 
   .view-switch a { padding: 6px 9px; gap: 5px; font-size: 13px; }
   .market-toolbar .dropdown > summary { height: 38px; padding: 0 10px 0 13px; gap: 6px; font-size: 13px; }
 }
-}
 .dropdown { position: relative; }
 .dropdown > summary { list-style: none; cursor: pointer; user-select: none; display: inline-flex; align-items: center; gap: 10px; height: 40px; padding: 0 14px 0 16px; border: 1px solid #c9d2c6; border-radius: 999px; background: #fff; font-size: 14px; font-weight: 700; color: var(--ink); }
 .dropdown > summary::-webkit-details-marker { display: none; }
