@@ -423,11 +423,13 @@ ul { padding-left: 1.2em; }
 
 @media (max-width: 560px) {
   .market-filter { padding: 16px; }
-  .market-search { margin-right: 112px; gap: 8px; }
+  .market-search { margin-right: 56px; gap: 8px; }
   .market-search-label { display: none; }
   .market-search-submit { padding: 0 14px; }
-  .market-more > summary { top: 16px; right: 16px; width: 104px; padding: 0 12px; }
-  .market-more > summary svg { display: none; }
+  /* Na mobilu jen ikona; text „Filtry“ zůstává pro čtečky obrazovky. */
+  .market-more > summary { top: 16px; right: 16px; width: 48px; padding: 0; }
+  .market-filter-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .market-more > summary .filter-count { position: absolute; top: -7px; right: -7px; }
 }
 @media (max-width: 640px) {
   .market-filter-grid { grid-template-columns: 1fr; }

@@ -50,3 +50,19 @@
     });
   });
 })();
+
+/* Na úzkém displeji kratší nápověda ve vyhledávání (např. jen „Hledat produkt“). */
+(function () {
+  'use strict';
+  var inputs = document.querySelectorAll('input[data-placeholder-short]');
+  if (!inputs.length || !window.matchMedia) return;
+  var narrow = window.matchMedia('(max-width: 560px)');
+  inputs.forEach(function (input) { input.setAttribute('data-placeholder-long', input.placeholder); });
+  var apply = function () {
+    inputs.forEach(function (input) {
+      input.placeholder = input.getAttribute(narrow.matches ? 'data-placeholder-short' : 'data-placeholder-long');
+    });
+  };
+  apply();
+  if (narrow.addEventListener) narrow.addEventListener('change', apply); else narrow.addListener(apply);
+})();

@@ -32,7 +32,7 @@ $noun = $isOffer
     <form class="card market-filter" method="get" action="<?= e($base) ?>" role="search" aria-label="Hledat a filtrovat">
         <div class="market-search">
             <label class="visually-hidden" for="m-q">Hledat produkt</label>
-            <input id="m-q" name="q" type="search" value="<?= e($in['q']) ?>" maxlength="100" placeholder="<?= $isOffer ? 'Hledat produkt, např. brambory' : 'Hledat produkt, např. jablka' ?>">
+            <input id="m-q" name="q" type="search" value="<?= e($in['q']) ?>" maxlength="100" placeholder="<?= $isOffer ? 'Hledat produkt, např. brambory' : 'Hledat produkt, např. jablka' ?>" data-placeholder-short="Hledat produkt">
             <button class="button market-search-submit" type="submit">
                 <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
                 <span class="market-search-label">Hledat</span>
@@ -41,7 +41,7 @@ $noun = $isOffer
         <details class="market-more"<?= $openFilters ? ' open' : '' ?>>
             <summary class="button secondary">
                 <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18"><path d="M4 6h16M7 12h10M10 18h4" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
-                Filtry<?php if ($extra > 0): ?> <span class="filter-count" aria-label="aktivní: <?= $extra ?>"><?= $extra ?></span><?php endif; ?>
+                <span class="market-filter-label">Filtry</span><?php if ($extra > 0): ?> <span class="filter-count" aria-label="aktivní: <?= $extra ?>"><?= $extra ?></span><?php endif; ?>
             </summary>
             <div class="market-filter-panel">
                 <div class="market-filter-grid">
