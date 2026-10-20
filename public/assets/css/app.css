@@ -559,7 +559,17 @@ mark.todo { background: #fff1b8; color: #6b5310; padding: 0 4px; border-radius: 
 .market-toolbar-left { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; }
 .market-toolbar-left .market-count { font-size: 14px; }
 .sort { display: flex; align-items: center; gap: 8px; }
-.sort-label { font-size: 14px; font-weight: 700; }
+/* Mobil: řazení a přepínač zobrazení v jednom řádku, počet a strana pod nimi. */
+@media (max-width: 560px) {
+  .market-toolbar { display: grid; grid-template-columns: auto auto; justify-content: space-between; align-items: center; gap: 10px 8px; }
+  .market-toolbar-left { display: contents; }
+  .market-toolbar .sort { order: 1; }
+  .market-toolbar .view-switch { order: 2; grid-column: 2; }
+  .market-toolbar .market-count { order: 3; grid-column: 1 / -1; }
+  .view-switch a { padding: 6px 9px; gap: 5px; font-size: 13px; }
+  .market-toolbar .dropdown > summary { height: 38px; padding: 0 10px 0 13px; gap: 6px; font-size: 13px; }
+}
+}
 .dropdown { position: relative; }
 .dropdown > summary { list-style: none; cursor: pointer; user-select: none; display: inline-flex; align-items: center; gap: 10px; height: 40px; padding: 0 14px 0 16px; border: 1px solid #c9d2c6; border-radius: 999px; background: #fff; font-size: 14px; font-weight: 700; color: var(--ink); }
 .dropdown > summary::-webkit-details-marker { display: none; }

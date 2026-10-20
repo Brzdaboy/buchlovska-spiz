@@ -89,7 +89,7 @@ $noun = $isOffer
             };
             ?>
             <div class="sort">
-                <span class="sort-label" id="sort-label">Řadit:</span>
+                <span class="visually-hidden" id="sort-label">Řadit</span>
                 <details class="dropdown" data-dropdown>
                     <summary aria-labelledby="sort-label sort-current"><span id="sort-current"><?= e($sortLabels[$filter->sort]) ?></span>
                         <svg class="chevron" aria-hidden="true" viewBox="0 0 24 24" width="16" height="16"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
