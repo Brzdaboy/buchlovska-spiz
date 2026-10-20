@@ -29,9 +29,9 @@ $current = static fn (string $path): string =>
 <body>
 <a class="skip-link" href="#obsah">Přeskočit na obsah</a>
 <header class="site-header">
-    <a class="brand" href="/" aria-label="Buchlovská spíž – úvod">
+    <a class="brand" href="/" aria-label="Pod Buchlovem to chutná – úvod">
         <span class="brand-mark" aria-hidden="true">B</span>
-        <span><strong>Buchlovská</strong><small>spíž</small></span>
+        <span><strong>Pod Buchlovem</strong><small>to chutná</small></span>
     </a>
     <?php ob_start(); ?>
         <?php foreach ($navItems as $path => $label): ?>
@@ -70,9 +70,9 @@ $current = static fn (string $path): string =>
 </main>
 <footer class="site-footer">
     <div class="footer-main">
-        <a class="brand light" href="/" aria-label="Buchlovská spíž – úvod">
+        <a class="brand light" href="/" aria-label="Pod Buchlovem to chutná – úvod">
             <span class="brand-mark" aria-hidden="true">B</span>
-            <span><strong>Buchlovská</strong><small>spíž</small></span>
+            <span><strong>Pod Buchlovem</strong><small>to chutná</small></span>
         </a>
         <p>Místní potraviny pro školní jídelny.<br>Přímo od zemědělců z mikroregionu Buchlov.</p>
         <nav class="footer-col" aria-label="Platforma">
