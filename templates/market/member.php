@@ -19,7 +19,7 @@ $count = count($items);
     <div class="page-hero-inner wide">
         <?php $crumbs = [[$name, null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1><?= e($name) ?></h1>
-        <p class="lead"><?= $isProducer ? 'Zemědělec / producent' : 'Škola / školní jídelna' ?> · <?= e($member['municipality']) ?></p>
+        <p class="hero-meta"><?= $isProducer ? 'Zemědělec / producent' : 'Škola / školní jídelna' ?> · <?= e($member['municipality']) ?></p>
     </div>
 </section>
 <div class="admin-content detail-grid member-profile">

@@ -11,7 +11,6 @@ $needsDate = ListingState::reactivationNeedsNewDate($offer['available_until'], t
     <div class="page-hero-inner wide">
         <?php $crumbs = [['Znovu zveřejnit: ' . $offer['product_name'], null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1>Znovu zveřejnit: <?= e($offer['product_name']) ?></h1>
-        <p class="lead">Nabídka se zveřejní hned, bez schvalování.</p>
     </div>
 </section>
 <div class="admin-content">

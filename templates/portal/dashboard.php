@@ -23,7 +23,6 @@ $badges = [
     <div class="page-hero-inner wide">
         <p class="eyebrow"><?= e($roles[$role] ?? $role) ?></p>
         <h1><?= e($name ?? 'Můj portál') ?></h1>
-        <p class="lead">Přihlášeni jako <strong><?= e($user['email']) ?></strong>.</p>
     </div>
 </section>
 <div class="admin-content dashboard">

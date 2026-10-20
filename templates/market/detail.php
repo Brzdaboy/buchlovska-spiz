@@ -11,7 +11,7 @@ $phoneHref = preg_replace('/[^0-9+]/', '', (string) $item['phone']);
         <?php $crumbs = [[$isOffer ? 'Nabídky' : 'Poptávky', '/' . $type->segment()], [(string) $item['product_name'], null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1><?= e($item['product_name']) ?></h1>
         <?php if ($isOwn): ?>
-            <p class="lead">Toto je vaše <?= $isOffer ? 'nabídka' : 'poptávka' ?>.
+            <p class="hero-meta">Toto je vaše <?= $isOffer ? 'nabídka' : 'poptávka' ?>.
                 <a href="/<?= $isOffer ? 'moje-nabidky' : 'moje-poptavky' ?>/<?= (int) $item['id'] ?>/upravit">Upravit</a></p>
         <?php endif; ?>
     </div>

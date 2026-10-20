@@ -25,9 +25,6 @@ $noun = $isOffer
     <div class="page-hero-inner wide">
         <?php $crumbs = [[$isOffer ? 'Nabídky' : 'Poptávky', null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1><?= $isOffer ? 'Nabídky zemědělců' : 'Poptávky škol' ?></h1>
-        <p class="lead"><?= $isOffer
-            ? 'Co nabízejí místní zemědělci a producenti. U každé nabídky najdete kontakt – domluvíte se napřímo.'
-            : 'Co shánějí školy a školní jídelny. U každé poptávky najdete kontakt na školu – domluvíte se napřímo.' ?></p>
     </div>
 </section>
 <div class="admin-content market">

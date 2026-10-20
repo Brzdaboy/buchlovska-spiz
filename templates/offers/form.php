@@ -14,15 +14,9 @@ $availability = $value('availability_type') ?: 'immediate';
     <div class="page-hero-inner wide">
         <?php $crumbs = [[$isNew ? 'Nová nabídka' : (string) $offer['product_name'], null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1><?= $isNew ? 'Nová nabídka' : 'Upravit nabídku' ?></h1>
-        <p class="lead">
-            <?php if ($isNew): ?>
-                Nabídka se zveřejní hned po uložení. Kontakty se k ní doplní z vašeho profilu.
-            <?php elseif ($offer['status'] === 'withdrawn'): ?>
-                Správce nabídku stáhl: <strong><?= e($offer['withdrawal_reason']) ?></strong>. Po opravě ji znovu uvolní.
-            <?php else: ?>
-                Změny se zveřejní okamžitě.
-            <?php endif; ?>
-        </p>
+        <?php if (!$isNew && $offer['status'] === 'withdrawn'): ?>
+            <p class="hero-meta">Správce nabídku stáhl: <strong><?= e($offer['withdrawal_reason']) ?></strong>. Po opravě ji znovu uvolní.</p>
+        <?php endif; ?>
     </div>
 </section>
 <div class="admin-content">

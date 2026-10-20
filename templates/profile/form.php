@@ -14,13 +14,9 @@ $records = $role === 'school' ? 'poptávek' : 'nabídek';
     <div class="page-hero-inner wide">
         <?php $crumbs = [[$isNew ? 'Dokončení profilu' : 'Můj profil', null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1><?= $isNew ? 'Dokončení profilu' : 'Můj profil' ?></h1>
-        <p class="lead">
-            <?php if ($isNew): ?>
-                Ještě krok: doplňte kontaktní údaje. Ostatní přihlášení členové je uvidí u vašich <?= $records ?>, aby vás mohli oslovit.
-            <?php else: ?>
-                Změny se zveřejní okamžitě u všech vašich <?= $records ?>.
-            <?php endif; ?>
-        </p>
+        <?php if ($isNew): ?>
+            <p class="hero-meta">Ještě krok: doplňte kontaktní údaje. Ostatní přihlášení členové je uvidí u vašich <?= $records ?>, aby vás mohli oslovit.</p>
+        <?php endif; ?>
     </div>
 </section>
 <div class="admin-content">

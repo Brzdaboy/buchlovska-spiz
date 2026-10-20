@@ -13,15 +13,9 @@ $isNew = $demand === null;
     <div class="page-hero-inner wide">
         <?php $crumbs = [[$isNew ? 'Nová poptávka' : (string) $demand['product_name'], null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1><?= $isNew ? 'Nová poptávka' : 'Upravit poptávku' ?></h1>
-        <p class="lead">
-            <?php if ($isNew): ?>
-                Poptávka se zveřejní hned po uložení. Kontakty školy se k ní doplní z vašeho profilu.
-            <?php elseif ($demand['status'] === 'withdrawn'): ?>
-                Správce poptávku stáhl: <strong><?= e($demand['withdrawal_reason']) ?></strong>. Po opravě ji znovu uvolní.
-            <?php else: ?>
-                Změny se zveřejní okamžitě.
-            <?php endif; ?>
-        </p>
+        <?php if (!$isNew && $demand['status'] === 'withdrawn'): ?>
+            <p class="hero-meta">Správce poptávku stáhl: <strong><?= e($demand['withdrawal_reason']) ?></strong>. Po opravě ji znovu uvolní.</p>
+        <?php endif; ?>
     </div>
 </section>
 <div class="admin-content">

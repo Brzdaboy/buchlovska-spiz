@@ -6,7 +6,7 @@
     <div class="page-hero-inner wide">
         <?php $crumbs = [['Smazat: ' . $offer['product_name'], null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1>Smazat nabídku?</h1>
-        <p class="lead">Nabídka <strong>„<?= e($offer['product_name']) ?>“</strong> zmizí z tržiště i z vašeho seznamu. Smazání nejde vrátit zpět.</p>
+        <p class="hero-meta">Nabídka <strong>„<?= e($offer['product_name']) ?>“</strong> zmizí z tržiště i z vašeho seznamu. Smazání nejde vrátit zpět.</p>
     </div>
 </section>
 <div class="admin-content">

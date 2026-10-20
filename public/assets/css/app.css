@@ -225,10 +225,17 @@ ul { padding-left: 1.2em; }
 /* ---------- Přihlášená část a administrace ---------- */
 .muted { color: var(--muted); }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.page-hero.compact { padding-top: 48px; padding-bottom: 36px; }
+/* Pracovní stránky (tržiště, portál, formuláře, administrace): úzký pruh, ať je víc vidět obsah. */
+.page-hero.compact { padding: 24px var(--edge) 22px; }
+.page-hero.compact h1 { font-size: clamp(26px, 3vw, 34px); line-height: 1.15; margin: 0; }
+.page-hero.compact .breadcrumbs { margin-bottom: 8px; }
+.page-hero.compact .eyebrow { margin-bottom: 6px; }
+.page-hero.compact .lead { font-size: 16px; margin: 8px 0 0; }
+.page-hero.compact .subnav { margin-top: 14px; }
+.hero-meta { margin: 6px 0 0; color: var(--muted); font-size: 15px; line-height: 1.5; max-width: 760px; }
 .page-hero-inner.wide { max-width: none; }
 .page-hero .eyebrow a { text-decoration: none; }
-.admin-content { padding: 40px var(--edge) 88px; }
+.admin-content { padding: 24px var(--edge) 88px; }
 .admin-content h2 { font-size: 26px; margin-top: 32px; }
 .admin-links { list-style: none; padding: 0; display: grid; gap: 14px; }
 .admin-link { display: flex; flex-direction: column; gap: 4px; text-decoration: none; margin: 0; }

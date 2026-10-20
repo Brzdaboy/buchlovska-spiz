@@ -15,7 +15,6 @@ $statusLabels = [
     <div class="page-hero-inner wide">
         <?php $crumbs = [['Administrace', '/admin'], ['Pozvánky', null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
         <h1>Pozvánky</h1>
-        <p class="lead">Registrace je jen na pozvánku. Odkaz v e-mailu platí 7 dní a lze ho použít jednou.</p>
         <?php require __DIR__ . '/nav.php'; ?>
     </div>
 </section>
