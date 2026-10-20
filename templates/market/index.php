@@ -79,7 +79,7 @@ $noun = $isOffer
         return $base . ($query === '' ? '?' : $query . '&') . 'zobrazeni=' . $key;
     };
     ?>
-    <div class="market-toolbar">
+    <div class="market-toolbar<?= $isOffer ? '' : ' no-sort' ?>">
     <div class="market-toolbar-left">
         <?php if ($isOffer):
             $sortLabels = \App\Service\MarketFilter::SORTS;
