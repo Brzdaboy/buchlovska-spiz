@@ -9,16 +9,12 @@ $phoneHref = preg_replace('/[^0-9+]/', '', (string) $item['phone']);
 <section class="page-hero compact">
     <div class="page-hero-inner wide">
         <?php $crumbs = [[$isOffer ? 'Nabídky' : 'Poptávky', '/' . $type->segment()], [(string) $item['product_name'], null]]; require dirname(__DIR__) . '/partials/breadcrumbs.php'; ?>
-        <h1><?= e($item['product_name']) ?></h1>
-        <?php if ($isOwn): ?>
-            <p class="hero-meta">Toto je vaše <?= $isOffer ? 'nabídka' : 'poptávka' ?>.
-                <a href="/<?= $isOffer ? 'moje-nabidky' : 'moje-poptavky' ?>/<?= (int) $item['id'] ?>/upravit">Upravit</a></p>
-        <?php endif; ?>
     </div>
 </section>
 <div class="admin-content detail-grid market-detail">
     <div>
         <div class="card market-detail-main">
+            <h1 class="market-detail-title"><?= e($item['product_name']) ?></h1>
             <?php if ($isOffer): ?>
                 <p class="market-detail-price"><?= e(format_price((string) $item['unit_price'], (string) $item['price_unit'])) ?></p>
                 <dl class="contact-list">
@@ -37,6 +33,10 @@ $phoneHref = preg_replace('/[^0-9+]/', '', (string) $item['phone']);
                     <?php if ($item['note'] !== null): ?><dt>Poznámka</dt><dd><?= nl2br(e($item['note'])) ?></dd><?php endif; ?>
                     <dt>Zveřejněno</dt><dd><?= e(format_datetime((string) $item['created_at'], 'j. n. Y')) ?><?= $item['content_updated_at'] > $item['created_at'] ? ', upraveno ' . e(format_datetime((string) $item['content_updated_at'], 'j. n. Y')) : '' ?></dd>
                 </dl>
+            <?php endif; ?>
+            <?php if ($isOwn): ?>
+                <p class="market-detail-own">Toto je vaše <?= $isOffer ? 'nabídka' : 'poptávka' ?>.
+                    <a href="/<?= $isOffer ? 'moje-nabidky' : 'moje-poptavky' ?>/<?= (int) $item['id'] ?>/upravit">Upravit</a></p>
             <?php endif; ?>
         </div>
     </div>

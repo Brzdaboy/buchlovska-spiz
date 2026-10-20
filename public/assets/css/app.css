@@ -229,6 +229,7 @@ ul { padding-left: 1.2em; }
 .page-hero.compact { padding: 24px var(--edge) 22px; }
 .page-hero.compact h1 { font-size: clamp(26px, 3vw, 34px); line-height: 1.15; margin: 0; }
 .page-hero.compact .breadcrumbs { margin-bottom: 8px; }
+.page-hero.compact .breadcrumbs:last-child { margin-bottom: 0; }
 .page-hero.compact .eyebrow { margin-bottom: 6px; }
 .page-hero.compact .lead { font-size: 16px; margin: 8px 0 0; }
 .page-hero.compact .subnav { margin-top: 14px; }
@@ -404,7 +405,10 @@ ul { padding-left: 1.2em; }
 .pagination li a[aria-current="page"] { background: var(--green); border-color: var(--green); color: #fff; }
 .pagination .gap { align-self: center; color: var(--muted); }
 
+.market-detail-title { font-size: clamp(26px, 3vw, 34px); line-height: 1.15; margin: 0 0 8px; }
 .market-detail-price { font: 700 28px var(--serif); color: var(--green); margin: 0 0 16px; }
+.market-detail-own { margin: 20px 0 0; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); }
+.market-detail-own a { font-weight: 700; color: var(--green); }
 .market-contact { background: var(--cream); border-color: transparent; }
 .market-contact .eyebrow { margin: 0 0 4px; }
 .market-contact .contact-list { grid-template-columns: 1fr; gap: 2px; }
